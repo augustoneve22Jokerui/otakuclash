@@ -1,0 +1,218 @@
+/* 
+ * OTAKU CLASH ANGOLA - INFRASTRUCTURE HEALTH MONITOR STYLES
+ * Senior DevOps & Frontend Engineer: Observability & System Status UI
+ */
+
+/* 1. Dashboard de Monitoramento Geral */
+.health-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* 2. Indicadores de Status (Pulses) */
+.status-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.status-indicator-box {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--border-radius-sm);
+    background: var(--bg-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+
+.health-pulse-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+
+/* 3. Recursos de Servidor (CPU/MEM/DISK) */
+.resource-usage-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+}
+
+.resource-row {
+    margin-bottom: 2rem;
+}
+
+.resource-row:last-child {
+    margin-bottom: 0;
+}
+
+.resource-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.resource-label {
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.resource-value {
+    font-family: 'Monaco', monospace;
+    color: var(--text-muted);
+}
+
+.oc-progress-track {
+    height: 10px;
+    background: var(--bg-main);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.oc-progress-bar {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bar-cpu { background: linear-gradient(90deg, var(--primary-color), #FF708D); }
+.bar-mem { background: linear-gradient(90deg, var(--secondary-color), #A585FF); }
+.bar-disk { background: linear-gradient(90deg, var(--success), #70E4FF); }
+
+/* 4. Lista de Serviços de Terceiros */
+.services-health-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.service-item {
+    padding: 1rem 1.25rem;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform var(--transition-speed);
+}
+
+.service-item:hover {
+    transform: translateX(5px);
+    border-color: var(--secondary-color);
+}
+
+.service-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.service-name {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.service-latency {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: 'Monaco', monospace;
+}
+
+/* 5. Uptime & Timeline Logs */
+.uptime-display {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(124, 77, 255, 0.03);
+    border: 1px dashed var(--secondary-color);
+    border-radius: var(--border-radius-md);
+    margin-bottom: 2rem;
+}
+
+.uptime-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-main);
+    display: block;
+}
+
+.health-pulse-log {
+    display: flex;
+    gap: 4px;
+    padding: 10px;
+    background: #050508;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.health-dot {
+    width: 6px;
+    height: 18px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.bg-success { background-color: var(--success) !important; }
+.bg-danger { background-color: var(--danger) !important; }
+.bg-warning { background-color: var(--warning) !important; }
+
+/* 6. Ações de Manutenção de Infra */
+.maintenance-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* 7. Responsividade */
+@media (max-width: 768px) {
+    .maintenance-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .health-overview-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 8. Estilo do Gráfico de Histórico */
+.usage-chart-wrapper {
+    height: 200px;
+    margin-top: 1.5rem;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius-sm);
+}
+
+/* 9. Tooltip Técnico */
+.tech-tooltip {
+    font-size: 0.7rem;
+    background: #000 !important;
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+}
+
+/* 10. Empty States Infra */
+.monitor-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-dim);
+}

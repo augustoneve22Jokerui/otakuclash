@@ -1,0 +1,186 @@
+/* 
+ * OTAKU CLASH ANGOLA - QUIZ MANAGEMENT STYLES
+ * Senior UI Designer: Gamification Rules & Performance UI
+ */
+
+/* 1. Dashboard de Sessões de Quiz */
+.quiz-sessions-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.quiz-stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition-speed);
+}
+
+.quiz-stat-card:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-3px);
+}
+
+.quiz-stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: rgba(124, 77, 255, 0.1);
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* 2. Regras e Configurações Globais */
+.quiz-settings-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.setting-row:last-child {
+    border-bottom: none;
+}
+
+.setting-info {
+    max-width: 60%;
+}
+
+.setting-title {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.setting-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* 3. Estilização de Modos de Jogo */
+.mode-badge-blitz {
+    background: rgba(255, 59, 92, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(255, 59, 92, 0.2);
+}
+
+.mode-badge-survival {
+    background: rgba(255, 171, 45, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(255, 171, 45, 0.2);
+}
+
+.mode-badge-practice {
+    background: rgba(0, 209, 255, 0.1);
+    color: var(--success);
+    border: 1px solid rgba(0, 209, 255, 0.2);
+}
+
+/* 4. Tabela de Histórico de Sessões */
+.session-score-cell {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.session-accuracy-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-main);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.accuracy-fill {
+    height: 100%;
+    background: var(--success);
+    border-radius: 10px;
+}
+
+/* 5. Performance Modal Details */
+.performance-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.performance-metric {
+    background: var(--bg-main);
+    padding: 1rem;
+    border-radius: var(--border-radius-sm);
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    display: block;
+}
+
+.metric-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* 6. Radar Chart Container (Performance Estilo RPG) */
+.performance-chart-wrapper {
+    height: 250px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(124, 77, 255, 0.05) 0%, transparent 70%);
+}
+
+/* 7. Responsividade */
+@media (max-width: 768px) {
+    .setting-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .setting-info {
+        max-width: 100%;
+    }
+    
+    .performance-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 8. Estilo de Botões de Ação de Sessão */
+.btn-cleanup-cache {
+    background: rgba(255, 59, 92, 0.05);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-cleanup-cache:hover {
+    background: var(--primary-color);
+    color: white;
+}

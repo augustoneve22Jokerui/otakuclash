@@ -1,0 +1,235 @@
+/* 
+ * OTAKU CLASH ANGOLA - TOURNAMENTS MODULE STYLES
+ * Senior UI Designer: Official Events & Tournament UX
+ */
+
+/* 1. Tournament Grid & Cards */
+.tournament-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.tournament-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.tournament-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-color);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* 2. Banner & Visuals */
+.tournament-banner-wrapper {
+    position: relative;
+    height: 180px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.tournament-banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.tournament-card:hover .tournament-banner-img {
+    transform: scale(1.1);
+}
+
+.tournament-status-overlay {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+}
+
+/* 3. Prize Pool Display */
+.prize-pool-badge {
+    background: linear-gradient(135deg, #FFD700 0%, #FFAB2D 100%);
+    color: #000000;
+    padding: 8px 16px;
+    border-radius: var(--border-radius-sm);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.prize-pool-badge i {
+    font-size: 1.25rem;
+}
+
+/* 4. Tournament Content & Info */
+.tournament-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+}
+
+.tournament-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-main);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tournament-meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.meta-item {
+    text-align: center;
+}
+
+.meta-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.meta-value {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+/* 5. Schedule / Timeline */
+.tournament-timeline {
+    margin-bottom: 1.5rem;
+}
+
+.timeline-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.timeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 20px;
+    height: 15px;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.step-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--bg-main);
+    border: 2px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.timeline-step.active .step-indicator {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px var(--primary-color);
+}
+
+.step-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* 6. Participant Management (Admin View) */
+.participant-list-container {
+    background: var(--bg-main);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.participant-item:last-child {
+    border-bottom: none;
+}
+
+/* 7. Registration Progress */
+.registration-progress-bar {
+    height: 6px;
+    background: var(--bg-main);
+    border-radius: 10px;
+    margin: 1rem 0;
+    overflow: hidden;
+}
+
+.registration-fill {
+    height: 100%;
+    background: var(--secondary-color);
+    transition: width 0.5s ease;
+}
+
+/* 8. Setup Form Specifics */
+.tournament-form-section {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.banner-upload-area {
+    width: 100%;
+    height: 200px;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: var(--bg-main);
+    transition: var(--transition-speed);
+}
+
+.banner-upload-area:hover {
+    border-color: var(--primary-color);
+}
+
+/* 9. Responsividade */
+@media (max-width: 768px) {
+    .tournament-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tournament-card {
+        max-width: 100%;
+    }
+}
+
+/* 10. Status Colors */
+.status-reg-open { color: var(--success); }
+.status-in-progress { color: var(--warning); }
+.status-finalized { color: var(--info); }
