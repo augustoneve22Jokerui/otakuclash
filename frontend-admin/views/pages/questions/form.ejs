@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: (typeof questionId !== 'undefined' ? 'Editar Questão' : 'Nova Questão'), moduleStyle: 'questions' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'questions' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Catálogo', url: '#' },
+                        { name: 'Questões', url: '/questions' },
+                        { name: (typeof questionId !== 'undefined' ? 'Editar Enunciado' : 'Novo Enunciado'), url: '#' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1"><%= (typeof questionId !== 'undefined' ? 'Editar Questão' : 'Configurar Nova Questão') %></h2>
+                        <p class="text-muted small">Defina o enunciado, as alternativas e a lógica de pontuação para o banco de dados.</p>
+                    </div>
+                    <button type="button" class="btn-oc btn-oc-outline" onclick="window.location.href='/questions'">
+                        <i class="bi bi-arrow-left me-2"></i> Voltar
+                    </button>
+                </div>
+
+                <form id="question-form">
+                    <input type="hidden" id="question-id" value="<%= typeof questionId !== 'undefined' ? questionId : '' %>">
+                    
+                    <div class="row g-4">
+                        <!-- Column: Question Content -->
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="oc-card mb-4" data-aos="fade-up">
+                                <h6 class="text-main fw-bold mb-3">Enunciado da Questão</h6>
+                                <div class="oc-input-group mb-0">
+                                    <textarea id="question_text" name="question_text" class="oc-input" rows="4" required maxlength="500" placeholder="Digite aqui a pergunta que será exibida ao jogador..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Options Builder -->
+                            <div class="oc-card" data-aos="fade-up" data-aos-delay="100">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h6 class="text-main fw-bold mb-0">Alternativas de Resposta</h6>
+                                    <button type="button" class="btn-oc btn-oc-outline btn-sm text-info" id="btn-add-option">
+                                        <i class="bi bi-plus-circle me-1"></i> Add Opção
+                                    </button>
+                                </div>
+
+                                <div id="options-container" class="options-builder-container">
+                                    <!-- Injetado via questions-form.js -->
+                                </div>
+
+                                <div class="alert alert-info bg-dark border-secondary mt-4 mb-0">
+                                    <div class="d-flex gap-2">
+                                        <i class="bi bi-lightbulb-fill text-info"></i>
+                                        <small class="text-muted">Marque o selector lateral da opção que representa a <strong>resposta correcta</strong>. Apenas uma resposta correcta é permitida por questão.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column: Metadata & Rules -->
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="oc-card mb-4" data-aos="fade-left">
+                                <h6 class="text-main fw-bold mb-3">Classificação e Vínculo</h6>
+                                
+                                <div class="oc-input-group">
+                                    <label class="oc-label">Obra Original (Anime)</label>
+                                    <select id="anime_id" name="anime_id" class="oc-input" required>
+                                        <option value="">Carregando catálogo...</option>
+                                    </select>
+                                </div>
+
+                                <div class="oc-input-group">
+                                    <label class="oc-label">Personagem Relacionado</label>
+                                    <select id="character_id" name="character_id" class="oc-input">
+                                        <option value="">Nenhum (Questão Geral)</option>
+                                    </select>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Categoria</label>
+                                            <select id="category" name="category" class="oc-input" required>
+                                                <option value="ANIME">Anime</option>
+                                                <option value="CHARACTER">Personagem</option>
+                                                <option value="PLOT">Enredo</option>
+                                                <option value="MUSIC">Música</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Dificuldade</label>
+                                            <select id="difficulty_level" name="difficulty_level" class="oc-input" required>
+                                                <option value="1">Level 1</option>
+                                                <option value="2">Level 2</option>
+                                                <option value="3">Level 3</option>
+                                                <option value="4">Level 4</option>
+                                                <option value="5">Level 5</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="oc-card mb-4" data-aos="fade-left" data-aos-delay="100">
+                                <h6 class="text-main fw-bold mb-3">Recompensas e Tempo</h6>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Pontos Base</label>
+                                            <input type="number" id="points" name="points" class="oc-input" value="10" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Limite (Segundos)</label>
+                                            <input type="number" id="time_limit" name="time_limit" class="oc-input" value="15" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-dim small mb-0 mt-1">O tempo padrão para resposta é de 15 segundos em duelos oficiais.</p>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2" data-aos="fade-up" data-aos-delay="200">
+                                <button type="submit" class="btn-oc btn-oc-primary py-3" id="btn-save-question">
+                                    <i class="bi bi-cloud-check me-2"></i> Publicar Questão
+                                </button>
+                                <button type="button" class="btn-oc btn-oc-outline" onclick="history.back()">
+                                    Descartar Rascunho
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </main>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'questions/questions-form' }) %>
+        </div>
+    </div>
+
+    <!-- Technical Overlay Loader -->
+    <div id="form-loader" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex align-items-center justify-content-center" style="display: none; z-index: 2000;">
+        <div class="text-center">
+            <div class="spinner-custom mx-auto mb-3"></div>
+            <p class="text-white fw-bold">Sincronizando com Banco de Dados...</p>
+        </div>
+    </div>
+</body>
+</html>

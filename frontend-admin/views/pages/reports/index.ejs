@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Moderação e Feedback', moduleStyle: 'reports' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'reports' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Sistema & Segurança', url: '#' },
+                        { name: 'Denúncias e Feedbacks', url: '/reports' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1">Central de Moderação</h2>
+                        <p class="text-muted small">Analise denúncias de jogadores, bugs reportados e sugestões da comunidade em Luanda e além.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn-oc btn-oc-outline" id="btn-refresh-reports">
+                            <i class="bi bi-arrow-clockwise me-2"></i> Actualizar Fila
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Moderation KPI Cards -->
+                <div class="reports-summary-grid mb-4" data-aos="fade-up">
+                    <div class="report-stat-card animate-up">
+                        <div class="report-stat-icon type-icon-cheating"><i class="bi bi-shield-slash"></i></div>
+                        <div>
+                            <small class="text-dim d-block uppercase fw-bold" style="font-size: 10px;">Cheating / Hacks</small>
+                            <span class="fs-4 fw-800 text-main" id="pending-cheats">0</span>
+                        </div>
+                    </div>
+                    <div class="report-stat-card animate-up" style="animation-delay: 0.1s;">
+                        <div class="report-stat-icon type-icon-toxicity"><i class="bi bi-chat-square-quote"></i></div>
+                        <div>
+                            <small class="text-dim d-block uppercase fw-bold" style="font-size: 10px;">Toxicidade / Chat</small>
+                            <span class="fs-4 fw-800 text-main" id="pending-toxicity">0</span>
+                        </div>
+                    </div>
+                    <div class="report-stat-card animate-up" style="animation-delay: 0.2s;">
+                        <div class="report-stat-icon type-icon-bug"><i class="bi bi-bug"></i></div>
+                        <div>
+                            <small class="text-dim d-block uppercase fw-bold" style="font-size: 10px;">Bugs Técnicos</small>
+                            <span class="fs-4 fw-800 text-main" id="pending-bugs">0</span>
+                        </div>
+                    </div>
+                    <div class="report-stat-card animate-up" style="animation-delay: 0.3s;">
+                        <div class="report-stat-icon type-icon-feedback"><i class="bi bi-heart-pulse"></i></div>
+                        <div>
+                            <small class="text-dim d-block uppercase fw-bold" style="font-size: 10px;">Sugestões / Feedback</small>
+                            <span class="fs-4 fw-800 text-main" id="pending-feedback">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters Bar -->
+                <div class="oc-card mb-4" data-aos="fade-up">
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <label class="oc-label">Filtrar por Estado</label>
+                            <select id="filter-report-status" class="oc-input border-0 bg-dark">
+                                <option value="">Todos os Estados</option>
+                                <option value="PENDING" selected>Pendentes de Análise</option>
+                                <option value="RESOLVED">Resolvidos</option>
+                                <option value="DISMISSED">Rejeitados / Ignorados</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <label class="oc-label">Tipo de Relato</label>
+                            <select id="filter-report-type" class="oc-input border-0 bg-dark">
+                                <option value="">Todas as Categorias</option>
+                                <option value="CHEATING">Cheating / Batota</option>
+                                <option value="TOXICITY">Conduta Imprópria</option>
+                                <option value="BUG">Erro no Sistema</option>
+                                <option value="FEEDBACK">Feedback de Usuário</option>
+                                <option value="OTHER">Outros Assuntos</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6 col-md-12 d-flex align-items-end">
+                            <div class="alert alert-info bg-dark border-secondary border-opacity-25 w-100 mb-0 py-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-info-circle-fill text-info"></i>
+                                    <small class="text-muted">Relatos urgentes (Cheating) são destacados automaticamente com borda vermelha.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Table -->
+                <div class="oc-card p-0 overflow-hidden" data-aos="fade-up">
+                    <div id="reports-loader" class="text-center py-5" style="display: none;">
+                        <div class="spinner-custom mx-auto"></div>
+                        <p class="text-muted small mt-2">Consultando registos de moderação...</p>
+                    </div>
+
+                    <div class="oc-table-container">
+                        <table class="oc-table mb-0" id="reports-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Ticket ID</th>
+                                    <th>Relator</th>
+                                    <th>Categoria</th>
+                                    <th>Descrição Curta</th>
+                                    <th>Estado</th>
+                                    <th class="text-end pe-4">Análise</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Injetado dinamicamente via reports.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center mt-4" data-aos="fade-up">
+                    <div class="text-dim small">
+                        Tickets de suporte e segurança
+                    </div>
+                    <div class="pagination-wrapper" id="reports-pagination">
+                        <!-- Gerado via JS -->
+                    </div>
+                </div>
+            </main>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'reports/reports' }) %>
+        </div>
+    </div>
+
+    <!-- The Detailed Analysis View is handled via SweetAlert2 (as defined in reports.js) -->
+    <!-- This ensures a clean DOM and consistent Premium UX for the Moderation workflow -->
+</body>
+</html>

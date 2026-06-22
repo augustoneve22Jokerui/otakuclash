@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Gestão de Equipa', moduleStyle: 'admin' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'admin' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Administração', url: '#' },
+                        { name: 'Equipa Staff', url: '/admin' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1">Corpo Administrativo</h2>
+                        <p class="text-muted small">Controle de acessos, níveis de permissão e monitoramento da equipa técnica.</p>
+                    </div>
+                    <button class="btn-oc btn-oc-primary" id="btn-promote-user">
+                        <i class="bi bi-shield-plus"></i> Promover Novo Membro
+                    </button>
+                </div>
+
+                <!-- Staff KPI Summary -->
+                <div class="admin-summary-pills mb-4" data-aos="fade-up">
+                    <div class="admin-pill">
+                        <i class="bi bi-shield-fill-check fs-5"></i>
+                        <div>
+                            <small class="text-dim d-block">Administradores</small>
+                            <span class="admin-pill-val" id="admin-count">0</span>
+                        </div>
+                    </div>
+                    <div class="admin-pill">
+                        <i class="bi bi-shield-shaded fs-5 text-secondary"></i>
+                        <div>
+                            <small class="text-dim d-block">Moderadores</small>
+                            <span class="admin-pill-val" id="mod-count">0</span>
+                        </div>
+                    </div>
+                    <div class="admin-pill">
+                        <i class="bi bi-broadcast fs-5 text-success"></i>
+                        <div>
+                            <small class="text-dim d-block">Staff Online</small>
+                            <span class="admin-pill-val" id="online-staff-count">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters and Quick Search -->
+                <div class="oc-card mb-4" data-aos="fade-up">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-4">
+                            <label class="oc-label">Filtrar por Cargo</label>
+                            <select id="staff-role-filter" class="oc-input border-0 bg-dark">
+                                <option value="">Todos os Níveis</option>
+                                <option value="ADMIN">Administradores</option>
+                                <option value="MODERATOR">Moderadores</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <!-- Espaço para extensões futuras -->
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn-oc btn-oc-outline w-100" id="btn-refresh-staff">
+                                <i class="bi bi-arrow-repeat"></i> Sincronizar Staff
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staff Members Table -->
+                <div class="oc-card p-0 overflow-hidden" data-aos="fade-up">
+                    <div id="staff-loader" class="text-center py-5" style="display: none;">
+                        <div class="spinner-custom mx-auto"></div>
+                        <p class="text-muted mt-2 small">Verificando credenciais...</p>
+                    </div>
+                    <div class="oc-table-container">
+                        <table class="oc-table mb-0" id="staff-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Membro da Equipa</th>
+                                    <th>Nível de Acesso</th>
+                                    <th>Atividade</th>
+                                    <th>Data de Ingresso</th>
+                                    <th class="text-end pe-4">Gestão</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Injetado via admin-users.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Danger Zone Info -->
+                <div class="admin-danger-zone mt-5" data-aos="fade-up">
+                    <div class="danger-zone-title">
+                        <i class="bi bi-exclamation-octagon"></i>
+                        Protocolos de Segurança
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Qualquer alteração de privilégios nesta página é registada permanentemente nos 
+                        <a href="/audit-logs" class="text-primary fw-bold">Logs de Auditoria</a>. 
+                        A promoção de membros exige autorização de nível Root.
+                    </p>
+                </div>
+            </main>
+
+            <!-- Modal: Alteraçao de Role (Permissões) -->
+            <div class="modal fade" id="role-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header border-secondary">
+                            <h5 class="modal-title fw-bold">Gestão de Privilégios</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="role-change-form">
+                            <input type="hidden" id="edit-user-id">
+                            <div class="modal-body p-4">
+                                <div class="text-center mb-4">
+                                    <div class="small text-muted mb-1">Membro Seleccionado</div>
+                                    <h4 class="text-main fw-800" id="edit-username-display">---</h4>
+                                </div>
+
+                                <div class="role-change-preview">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <div class="text-center">
+                                            <small class="text-dim d-block mb-1">Actual</small>
+                                            <span class="oc-badge badge-info" id="current-role-badge">USER</span>
+                                        </div>
+                                        <i class="bi bi-arrow-right role-arrow"></i>
+                                        <div class="text-center">
+                                            <small class="text-dim d-block mb-1">Novo Nível</small>
+                                            <select id="new-role-select" class="oc-input text-center py-1">
+                                                <option value="USER">USUÁRIO</option>
+                                                <option value="MODERATOR">MODERADOR</option>
+                                                <option value="ADMIN">ADMIN</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-warning bg-dark border-warning border-opacity-25 mt-4">
+                                    <div class="d-flex gap-2">
+                                        <i class="bi bi-shield-exclamation fs-5"></i>
+                                        <small class="text-muted">Esta acção concede acesso a funcionalidades críticas do sistema, incluindo dados financeiros e moderação de conteúdo.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-secondary bg-main">
+                                <button type="button" class="btn-oc btn-oc-outline" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn-oc btn-oc-primary" id="btn-save-role">
+                                    <i class="bi bi-check-lg me-2"></i> Confirmar Promoção
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Footer -->
+            <%- include('../../partials/footer', { moduleScript: 'admin/admin-users' }) %>
+        </div>
+    </div>
+</body>
+</html>

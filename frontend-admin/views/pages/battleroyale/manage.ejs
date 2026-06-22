@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Gestão Battle Royale', moduleStyle: 'battleroyale' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'battleroyale' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Arena & Competição', url: '#' },
+                        { name: 'Battle Royale', url: '/battle-royale' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1">Arenas de Sobrevivência</h2>
+                        <p class="text-muted small">Gerencie partidas massivas, crie eventos globais e monitore eliminações em tempo real.</p>
+                    </div>
+                    <button class="btn-oc btn-oc-primary" id="btn-create-br">
+                        <i class="bi bi-sword me-2"></i> Criar Nova Arena
+                    </button>
+                </div>
+
+                <!-- Battle Royale Quick Stats -->
+                <div class="row g-4 mb-4" data-aos="fade-up">
+                    <div class="col-md-3">
+                        <div class="oc-card">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="stat-card-icon primary"><i class="bi bi-fire"></i></div>
+                                <div>
+                                    <small class="text-dim d-block">Salas Ativas</small>
+                                    <span class="fs-4 fw-800 text-main" id="total-rooms-count">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="oc-card">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="stat-card-icon text-info"><i class="bi bi-people-fill"></i></div>
+                                <div>
+                                    <small class="text-dim d-block">Jogadores em Combate</small>
+                                    <span class="fs-4 fw-800 text-main" id="total-players-fighting">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="oc-card h-100 border-primary border-opacity-25 bg-primary bg-opacity-10 d-flex align-items-center justify-content-between px-4">
+                            <div>
+                                <h6 class="text-primary fw-bold mb-1">Grande Torneio Semanal</h6>
+                                <p class="text-muted small mb-0">Agendado para Domingo às 20h (Luanda). Premiação: 50.000 AKZ</p>
+                            </div>
+                            <span class="oc-badge badge-danger animate-pulse">EVENTO ÉPICO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Arenas Grid -->
+                <div class="row br-arena-grid" id="br-rooms-grid">
+                    <div class="col-12 text-center py-5" id="br-loader">
+                        <div class="spinner-custom mx-auto"></div>
+                        <p class="text-muted mt-3 small">Sintonizando arenas em tempo real...</p>
+                    </div>
+                    <!-- Injetado dinamicamente via br-manage.js -->
+                </div>
+            </main>
+
+            <!-- Modal: Criar Arena BR -->
+            <div class="modal fade" id="br-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content shadow-lg border-secondary">
+                        <div class="modal-header border-secondary bg-main">
+                            <h5 class="modal-title fw-bold">Configurar Arena Battle Royale</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="br-create-form">
+                            <div class="modal-body p-4">
+                                <div class="oc-input-group">
+                                    <label class="oc-label">Título da Arena</label>
+                                    <input type="text" name="title" class="oc-input" required placeholder="Ex: Sobrevivência Konoha">
+                                </div>
+                                <div class="oc-input-group">
+                                    <label class="oc-label">Anime Categoria</label>
+                                    <select name="anime_id" id="anime_id" class="oc-input" required>
+                                        <option value="">Selecione o tema da batalha...</option>
+                                        <!-- Populado via JS -->
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Taxa de Entrada (AKZ)</label>
+                                            <input type="number" name="entry_fee" class="oc-input" required value="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Limite de Jogadores</label>
+                                            <input type="number" name="max_players" class="oc-input" required value="100" min="2" max="1000">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info bg-dark border-secondary mt-2 small mb-0">
+                                    <i class="bi bi-info-circle me-2 text-info"></i>
+                                    A arena será aberta imediatamente no lobby global após a criação.
+                                </div>
+                            </div>
+                            <div class="modal-footer border-secondary bg-main">
+                                <button type="button" class="btn-oc btn-oc-outline" data-bs-dismiss="modal">Descartar</button>
+                                <button type="submit" class="btn-oc btn-oc-primary" id="btn-submit-br">
+                                    <i class="bi bi-check-lg me-2"></i> Abrir Inscrições
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal: Monitor de Arena (Real-time Console) -->
+            <div class="modal fade" id="br-monitor-modal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content bg-main">
+                        <div class="modal-header border-secondary px-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="status-pulse-green"></span>
+                                <h5 class="modal-title fw-800 text-main" id="monitor-title">MONITORANDO ARENA</h5>
+                                <span class="oc-badge badge-soft-primary" id="monitor-room-code">#----</span>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="br-monitor-layout">
+                                <!-- Center: Match Activity -->
+                                <div class="d-flex flex-column h-100">
+                                    <div class="br-round-stats mb-4">
+                                        <div class="text-center">
+                                            <span class="round-label">Rodada Actual</span>
+                                            <div class="round-number-display" id="monitor-round">0</div>
+                                        </div>
+                                        <div class="vr bg-secondary opacity-25"></div>
+                                        <div class="text-center">
+                                            <span class="round-label">Total em Jogo</span>
+                                            <div class="round-number-display text-success" id="monitor-players-count">0</div>
+                                        </div>
+                                        <div class="vr bg-secondary opacity-25"></div>
+                                        <div class="text-center">
+                                            <span class="round-label">Eliminados</span>
+                                            <div class="round-number-display text-danger" id="monitor-eliminated-count">0</div>
+                                        </div>
+                                    </div>
+
+                                    <h6 class="text-dim fw-bold small mb-3 uppercase">Feed de Combate</h6>
+                                    <div class="br-event-feed flex-grow-1" id="br-feed">
+                                        <!-- Real-time events from Socket.IO -->
+                                    </div>
+                                </div>
+
+                                <!-- Right: Player Registry -->
+                                <div class="br-players-sidebar">
+                                    <div class="br-players-header">
+                                        <span class="fw-bold small">LISTA DE SOBREVIVENTES</span>
+                                        <i class="bi bi-person-lines-fill text-muted"></i>
+                                    </div>
+                                    <div class="br-players-list" id="monitor-players-list">
+                                        <!-- Player list injected via JS -->
+                                    </div>
+                                    <div class="p-3 border-top border-secondary mt-auto bg-dark">
+                                        <button class="btn-oc btn-oc-outline w-100 text-danger btn-sm" onclick="BRManage.terminateRoom()">
+                                            <i class="bi bi-x-octagon me-2"></i> Encerrar Partida
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'battleroyale/br-manage' }) %>
+        </div>
+    </div>
+</body>
+</html>
