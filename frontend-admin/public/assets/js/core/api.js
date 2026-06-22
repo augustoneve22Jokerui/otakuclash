@@ -1,11 +1,15 @@
 /**
- * OTAKU CLASH ANGOLA - API CLIENT (AXIOS CONFIG)
- * Senior Backend & Frontend Engineer: Communication Layer
+ * 🚀 OTAKU CLASH ANGOLA - API CLIENT (AXIOS CONFIG)
+ * Versão: Ultra Mega Final - Enterprise Grade
+ * Descrição: Gerenciador de requisições com tratamento de tokens, refresh automático e interceptors.
  */
 
+// Definição da URL base capturada do partial head-meta.ejs
+const BASE_URL = window.API_URL || 'https://otakuclashaangola.onrender.com/api/v1';
+
 const apiClient = axios.create({
-    baseURL: window.API_URL || 'https://otakuclashaangola.onrender.com/api/v1',
-    timeout: 15000,
+    baseURL: BASE_URL,
+    timeout: 30000,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -13,12 +17,12 @@ const apiClient = axios.create({
 });
 
 /**
- * Interceptor de Requisição
- * Injeta o token JWT em cada chamada enviada ao backend
+ * 🛡️ INTERCEPTOR DE REQUISIÇÃO
+ * Injeta o JWT Access Token em todas as chamadas.
  */
 apiClient.interceptors.request.use(
     (config) => {
-        const token = window.Auth.getAccessToken();
+        const token = window.Auth ? window.Auth.getAccessToken() : localStorage.getItem('oc_admin_access_token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -30,54 +34,57 @@ apiClient.interceptors.request.use(
 );
 
 /**
- * Interceptor de Resposta
- * Lida com sucessos e falhas globais, incluindo expiração de token
+ * 🔄 INTERCEPTOR DE RESPOSTA
+ * Gerencia erros globais, expiração de token (401) e alertas.
  */
 apiClient.interceptors.response.use(
     (response) => {
-        // Retorna apenas os dados se a estrutura do backend for padronizada {status, message, data}
         return response.data;
     },
     async (error) => {
         const originalRequest = error.config;
 
-        // 1. Verifica se o erro é 401 (Não autorizado/Token expirado)
-        // O _retry evita loop infinito caso o refresh também falhe
-        if (error.response && error.status === 401 && !originalRequest._retry) {
+        // 1. Tratamento de Expiração de Token (Auto-Refresh)
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
             try {
-                const refreshToken = window.Auth.getRefreshToken();
+                const refreshToken = window.Auth ? window.Auth.getRefreshToken() : localStorage.getItem('oc_admin_refresh_token');
                 
                 if (!refreshToken) {
-                    window.Auth.logout();
+                    if (window.Auth) window.Auth.logout();
                     return Promise.reject(error);
                 }
 
-                // Tenta renovar o token no endpoint real do backend
-                // Nota: Usamos axios puro aqui para evitar os interceptores da nossa instância apiClient
-                const refreshResponse = await axios.post(`${apiClient.defaults.baseURL}/auth/refresh`, {
+                // Chamada de refresh para o endpoint real do backend
+                const response = await axios.post(`${BASE_URL}/auth/refresh`, {
                     refreshToken: refreshToken
                 });
 
-                if (refreshResponse.data && refreshResponse.data.data.accessToken) {
-                    const { accessToken } = refreshResponse.data.data;
+                if (response.data && response.data.data.accessToken) {
+                    const newAccessToken = response.data.data.accessToken;
                     
-                    // Salva o novo token e atualiza a requisição original
-                    window.Auth.saveSession({ accessToken }, window.Auth.getUser());
-                    apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-                    originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+                    // Atualiza a sessão
+                    if (window.Auth) {
+                        window.Auth.saveSession({ accessToken: newAccessToken }, window.Auth.getUser());
+                    } else {
+                        localStorage.setItem('oc_admin_access_token', newAccessToken);
+                    }
+
+                    // Re-executa a requisição original com o novo token
+                    apiClient.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+                    originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
                     
                     return apiClient(originalRequest);
                 }
             } catch (refreshError) {
-                console.error('[API] Falha crítica na renovação do token:', refreshError);
-                window.Auth.logout();
+                console.error('[API] Falha crítica na renovação da sessão:', refreshError);
+                if (window.Auth) window.Auth.logout();
                 return Promise.reject(refreshError);
             }
         }
 
-        // 2. Tratamento de Erros Amigáveis ao Usuário
+        // 2. Formatação de Mensagem de Erro Amigável
         let errorMessage = 'Ocorreu um erro inesperado na comunicação com o servidor.';
         
         if (error.response && error.response.data) {
@@ -86,33 +93,38 @@ apiClient.interceptors.response.use(
             errorMessage = 'O servidor não respondeu. Verifique sua conexão com a internet.';
         }
 
-        // Exibe alerta visual se não for uma rota silenciosa
+        // 3. Exibição de Alerta Visual (SweetAlert2)
+        // Só exibe se a requisição não for marcada como 'silent'
         if (!originalRequest.silent) {
-            Swal.fire({
-                title: 'Erro na Operação',
-                text: errorMessage,
-                icon: 'error',
-                background: 'var(--bg-card)',
-                color: 'var(--text-main)',
-                confirmButtonColor: var(--primary-color)
-            });
-        
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Erro na Operação',
+                    text: errorMessage,
+                    icon: 'error',
+                    background: '#131320',
+                    color: '#FFFFFF',
+                    confirmButtonColor: '#FF3B5C'
+                });
+            } else {
+                console.error('[API Error]', errorMessage);
+            }
+        }
 
         return Promise.reject(error);
     }
 );
 
 /**
- * Wrapper de conveniência para métodos HTTP
+ * 📦 EXPOSIÇÃO DO WRAPPER GLOBAL
  */
-const API = {
+window.API = {
     get: (url, config = {}) => apiClient.get(url, config),
     post: (url, data, config = {}) => apiClient.post(url, data, config),
     put: (url, data, config = {}) => apiClient.put(url, data, config),
     patch: (url, data, config = {}) => apiClient.patch(url, data, config),
     delete: (url, config = {}) => apiClient.delete(url, config),
     
-    // Método para upload de arquivos (Multipart/Form-Data)
+    // Suporte a upload de arquivos reais para Supabase Storage
     upload: (url, formData, onUploadProgress) => {
         return apiClient.post(url, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
@@ -121,5 +133,4 @@ const API = {
     }
 };
 
-// Expor globalmente
-window.API = API;
+console.log('[API] Motor de integração inicializado.');
