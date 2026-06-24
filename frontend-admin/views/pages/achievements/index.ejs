@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Gestão de Conquistas', moduleStyle: 'achievements' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'achievements' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Social & Engajamento', url: '#' },
+                        { name: 'Conquistas', url: '/achievements' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1">Sistema de Gamificação</h2>
+                        <p class="text-muted small">Gerencie as insígnias, requisitos e recompensas para os jogadores.</p>
+                    </div>
+                    <button class="btn-oc btn-oc-primary" id="btn-add-achievement">
+                        <i class="bi bi-plus-lg"></i> Criar Nova Conquista
+                    </button>
+                </div>
+
+                <!-- KPI Stats Section -->
+                <div class="achievements-stats-grid mb-4">
+                    <div class="oc-card stat-card hover-lift" data-aos="fade-up">
+                        <div class="stat-card-icon"><i class="bi bi-trophy"></i></div>
+                        <div class="stat-card-value" id="total-achievements">0</div>
+                        <div class="stat-card-label">Total de Conquistas</div>
+                    </div>
+                    <div class="oc-card stat-card hover-lift primary" data-aos="fade-up" data-aos-delay="100">
+                        <div class="stat-card-icon"><i class="bi bi-lightning-charge"></i></div>
+                        <div class="stat-card-value" id="total-reward-xp">0</div>
+                        <div class="stat-card-label">XP Distribuído</div>
+                    </div>
+                    <div class="oc-card stat-card hover-lift" data-aos="fade-up" data-aos-delay="200">
+                        <div class="stat-card-icon text-success"><i class="bi bi-person-check"></i></div>
+                        <div class="stat-card-value">12.4k</div>
+                        <div class="stat-card-label">Jogadores Premiados</div>
+                    </div>
+                </div>
+
+                <!-- Filters & Search Bar -->
+                <div class="oc-card mb-4" data-aos="fade-up">
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <div class="auth-input-group mb-0">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="achievement-search" class="form-control" placeholder="Buscar por nome ou descrição...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="filter-category" class="oc-input border-0 bg-dark">
+                                <option value="">Todas as Categorias</option>
+                                <option value="PROGRESSION">Progressão (Nível/XP)</option>
+                                <option value="KNOWLEDGE">Conhecimento (Acertos)</option>
+                                <option value="COMPETITIVE">Competitivo (Vitórias)</option>
+                                <option value="ECONOMY">Economia (Moedas)</option>
+                                <option value="SOCIAL">Social (Clãs/Amigos)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn-oc btn-oc-outline w-100" id="btn-refresh-achievements">
+                                <i class="bi bi-arrow-clockwise"></i> Atualizar Lista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements Data Table -->
+                <div class="oc-card p-0 overflow-hidden" data-aos="fade-up">
+                    <div id="table-loader" class="text-center py-5" style="display: none;">
+                        <div class="spinner-custom mx-auto"></div>
+                        <p class="text-muted mt-2 small">Sincronizando banco de dados...</p>
+                    </div>
+                    <div class="oc-table-container">
+                        <table class="oc-table mb-0" id="achievements-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Badge & Nome</th>
+                                    <th>Categoria</th>
+                                    <th>Requisito Técnico</th>
+                                    <th>Recompensa Base</th>
+                                    <th class="text-end pe-4">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Injetado dinamicamente via achievements.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Modal: Form de Conquista -->
+            <div class="modal fade" id="achievement-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content shadow-lg border-secondary">
+                        <div class="modal-header border-secondary bg-main">
+                            <h5 class="modal-title fw-bold" id="modal-title">Configurar Conquista</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="achievement-form">
+                            <input type="hidden" id="achievement-id" name="id">
+                            <div class="modal-body p-4">
+                                <div class="row g-4">
+                                    <div class="col-md-4 text-center border-end border-secondary">
+                                        <label class="oc-label mb-3">Ícone da Badge</label>
+                                        <div class="badge-upload-zone" onclick="document.getElementById('badge-input').click()">
+                                            <img src="/assets/img/placeholders/badge.png" id="badge-preview" alt="Preview">
+                                            <div class="text-dim small mt-2">Upload PNG</div>
+                                        </div>
+                                        <input type="file" id="badge-input" hidden accept="image/png">
+                                        <input type="hidden" name="badge_url" id="badge_url">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Nome da Conquista</label>
+                                            <input type="text" name="name" id="name" class="oc-input" required placeholder="Ex: Mestre de Luanda">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="oc-input-group">
+                                                    <label class="oc-label">Categoria</label>
+                                                    <select name="category" id="category" class="oc-input" required>
+                                                        <option value="PROGRESSION">Progressão</option>
+                                                        <option value="KNOWLEDGE">Conhecimento</option>
+                                                        <option value="COMPETITIVE">Competitivo</option>
+                                                        <option value="ECONOMY">Economia</option>
+                                                        <option value="SOCIAL">Social</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="oc-input-group">
+                                                    <label class="oc-label">Raridade</label>
+                                                    <select name="rarity" id="rarity" class="oc-input">
+                                                        <option value="COMMON">Comum</option>
+                                                        <option value="RARE">Raro</option>
+                                                        <option value="EPIC">Épico</option>
+                                                        <option value="LEGENDARY">Lendário</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Descrição (O que o jogador verá)</label>
+                                            <textarea name="description" id="description" class="oc-input" rows="2" required placeholder="Descreva o desafio..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12"><hr class="border-secondary my-0"></div>
+
+                                    <div class="col-md-6">
+                                        <h6 class="text-secondary fw-bold mb-3"><i class="bi bi-gear-fill me-2"></i>Regra de Desbloqueio</h6>
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Tipo de Requisito</label>
+                                            <select name="requirement_type" id="requirement_type" class="oc-input" required>
+                                                <option value="XP_LEVEL">Nível de XP</option>
+                                                <option value="MATCH_COUNT">Total de Partidas</option>
+                                                <option value="WIN_COUNT">Total de Vitórias</option>
+                                                <option value="CORRECT_ANSWERS">Respostas Corretas</option>
+                                                <option value="BALANCE_TOTAL">Acúmulo de Moedas</option>
+                                            </select>
+                                        </div>
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Valor do Objetivo</label>
+                                            <input type="number" name="requirement_value" id="requirement_value" class="oc-input" required placeholder="Ex: 50">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h6 class="text-success fw-bold mb-3"><i class="bi bi-gift-fill me-2"></i>Prêmios ao Conquistar</h6>
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">XP de Recompensa</label>
+                                            <input type="number" name="reward_xp" id="reward_xp" class="oc-input" required value="0">
+                                        </div>
+                                        <div class="oc-input-group">
+                                            <label class="oc-label">Moedas (AKZ)</label>
+                                            <input type="number" step="0.01" name="reward_coins" id="reward_coins" class="oc-input" required value="0.00">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-secondary bg-main p-3">
+                                <button type="button" class="btn-oc btn-oc-outline" data-bs-dismiss="modal">Descartar</button>
+                                <button type="submit" class="btn-oc btn-oc-primary" id="btn-save-achievement">
+                                    <i class="bi bi-cloud-check me-2"></i> Salvar Conquista
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'achievements/achievements' }) %>
+        </div>
+    </div>
+
+    <!-- UI Interaction Helper -->
+    <script>
+        // Preview de Imagem Local antes do upload real para o Supabase
+        document.getElementById('badge-input')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('badge-preview').src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

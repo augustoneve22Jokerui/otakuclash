@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Classificações Globais', moduleStyle: 'leaderboards' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'rankings' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Economia & Rankings', url: '#' },
+                        { name: 'Leaderboards', url: '/rankings' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1">Hall da Fama Otaku</h2>
+                        <p class="text-muted small">Acompanhe os jogadores e clãs de elite baseados em XP acumulado e desempenho sazonal.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn-oc btn-oc-outline" id="btn-refresh-ranks">
+                            <i class="bi bi-arrow-clockwise me-2"></i> Actualizar
+                        </button>
+                        <button class="btn-oc btn-oc-primary" id="btn-clear-rank-cache">
+                            <i class="bi bi-lightning-charge"></i> Recalcular Rankings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Type Navigation -->
+                <div class="rank-tabs-nav" data-aos="fade-up">
+                    <div class="rank-tab-btn active" data-rank-tab="global">
+                        <i class="bi bi-globe2 me-2"></i> Ranking Global
+                    </div>
+                    <div class="rank-tab-btn" data-rank-tab="period">
+                        <i class="bi bi-calendar-event me-2"></i> Desempenho Mensal
+                    </div>
+                    <div class="rank-tab-btn" data-rank-tab="guilds">
+                        <i class="bi bi-shield-shaded me-2"></i> Elite de Clãs
+                    </div>
+                </div>
+
+                <!-- Podium Visualization (Top 3) -->
+                <div class="rank-podium-container animate-up" id="rank-podium">
+                    <!-- Injetado dinamicamente via leaderboards.js -->
+                    <div class="text-center py-5 w-100">
+                        <div class="spinner-custom mx-auto"></div>
+                        <p class="text-muted mt-3">Sincronizando pódio...</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Column: Main Ranking Table -->
+                    <div class="col-xl-9 col-lg-8">
+                        <div class="oc-card mb-4" id="period-filter-wrapper" style="display: none;" data-aos="fade-up">
+                            <div class="d-flex align-items-center gap-3">
+                                <label class="oc-label mb-0">Período de Análise:</label>
+                                <select id="rank-period-filter" class="oc-input border-0 bg-dark py-1" style="width: auto;">
+                                    <option value="daily">Diário</option>
+                                    <option value="weekly">Semanal</option>
+                                    <option value="monthly" selected>Mensal (Temporada)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="oc-card p-0 overflow-hidden" data-aos="fade-up">
+                            <div id="rank-loader" class="text-center py-5" style="display: none;">
+                                <div class="spinner-border text-primary" role="status"></div>
+                            </div>
+                            <div class="oc-table-container">
+                                <table class="oc-table mb-0" id="leaderboard-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Pos.</th>
+                                            <th>Avatar e Identidade</th>
+                                            <th>Pontuação Total</th>
+                                            <th>Nível / Tier</th>
+                                            <th class="text-end pe-4">Perfil</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populado via Leaderboards.renderLeaderboard -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column: Ranking Widgets -->
+                    <div class="col-xl-3 col-lg-4">
+                        <!-- Widget: Stats Summary -->
+                        <div class="ranking-sidebar-widget animate-right">
+                            <h6 class="text-main fw-bold mb-3"><i class="bi bi-graph-up text-primary me-2"></i>Métricas de Temporada</h6>
+                            <div class="stat-row-compact">
+                                <span class="info-label">Jogadores Activos</span>
+                                <span class="info-value">14.2k</span>
+                            </div>
+                            <div class="stat-row-compact">
+                                <span class="info-label">XP Médio</span>
+                                <span class="info-value">8.450</span>
+                            </div>
+                            <div class="stat-row-compact">
+                                <span class="info-label">Clãs Competindo</span>
+                                <span class="info-value">156</span>
+                            </div>
+                        </div>
+
+                        <!-- Widget: Top Categories -->
+                        <div class="ranking-sidebar-widget animate-right" style="animation-delay: 0.1s;">
+                            <h6 class="text-main fw-bold mb-3"><i class="bi bi-star-fill text-warning me-2"></i>Categorias Populares</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="oc-badge badge-soft-primary">Naruto Masters</span>
+                                <span class="oc-badge badge-soft-primary">One Piece Elite</span>
+                                <span class="oc-badge badge-soft-primary">DBZ Legends</span>
+                                <span class="oc-badge badge-soft-primary">Geral</span>
+                            </div>
+                        </div>
+
+                        <!-- Widget: Rules Info -->
+                        <div class="oc-card bg-dark border-secondary border-opacity-50" data-aos="fade-left">
+                            <h6 class="text-dim fw-bold small mb-2 uppercase">Nota do Sistema</h6>
+                            <p class="text-muted" style="font-size: 11px; line-height: 1.4;">
+                                Os rankings são calculados com base no XP ganho em partidas oficiais, bónus de velocidade e multiplicadores de modo de jogo. O reset de pódio ocorre a cada 24h.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'leaderboards/leaderboards' }) %>
+        </div>
+    </div>
+</body>
+</html>

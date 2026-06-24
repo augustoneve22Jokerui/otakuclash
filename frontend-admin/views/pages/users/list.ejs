@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Gestão de Usuários', moduleStyle: 'users' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'users' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Administração', url: '#' },
+                        { name: 'Gestão de Usuários', url: '/users' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1">Directório de Utilizadores</h2>
+                        <p class="text-muted small">Administre contas, controle níveis de acesso e monitore a integridade da comunidade.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn-oc btn-oc-outline" id="btn-export-users">
+                            <i class="bi bi-file-earmark-arrow-down me-2"></i> Exportar Lista
+                        </button>
+                        <a href="/users/new" class="btn-oc btn-oc-primary">
+                            <i class="bi bi-person-plus-fill me-2"></i> Novo Utilizador
+                        </a>
+                    </div>
+                </div>
+
+                <!-- User Base Stats -->
+                <div class="row g-4 mb-4" data-aos="fade-up">
+                    <div class="col-md-3">
+                        <div class="oc-card stat-card hover-lift">
+                            <div class="stat-card-icon"><i class="bi bi-people-fill"></i></div>
+                            <div class="stat-card-value" id="total-users-stat">0</div>
+                            <div class="stat-card-label">Total de Registos</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="oc-card stat-card hover-lift primary">
+                            <div class="stat-card-icon"><i class="bi bi-shield-check"></i></div>
+                            <div class="stat-card-value">2.1k</div>
+                            <div class="stat-card-label">Contas Verificadas</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="oc-card stat-card hover-lift border-danger border-opacity-25">
+                            <div class="stat-card-icon text-danger"><i class="bi bi-person-x"></i></div>
+                            <div class="stat-card-value">235</div>
+                            <div class="stat-card-label">Utilizadores Banidos</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="oc-card stat-card hover-lift secondary">
+                            <div class="stat-card-icon"><i class="bi bi-person-badge"></i></div>
+                            <div class="stat-card-value">12</div>
+                            <div class="stat-card-label">Equipa Staff</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters -->
+                <div class="oc-card mb-4" data-aos="fade-up">
+                    <div class="row g-3">
+                        <div class="col-xl-4 col-lg-5">
+                            <label class="oc-label">Pesquisa Global</label>
+                            <div class="auth-input-group mb-0">
+                                <i class="bi bi-search"></i>
+                                <input type="text" id="user-search" class="form-control" placeholder="Buscar por Username, Email ou ID...">
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-3">
+                            <label class="oc-label">Nível de Acesso</label>
+                            <select id="filter-user-role" class="oc-input border-0 bg-dark">
+                                <option value="">Todos os Cargos</option>
+                                <option value="ADMIN">Administradores</option>
+                                <option value="MODERATOR">Moderadores</option>
+                                <option value="USER">Utilizadores Comuns</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-2 col-lg-4">
+                            <label class="oc-label">Estado da Conta</label>
+                            <select id="filter-user-status" class="oc-input border-0 bg-dark">
+                                <option value="">Qualquer Estado</option>
+                                <option value="Active">Activa</option>
+                                <option value="Suspended">Suspensa</option>
+                                <option value="Banned">Banida</option>
+                                <option value="Pending">Pendente</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-4 col-lg-12 d-flex align-items-end">
+                            <div class="d-flex gap-2 w-100">
+                                <select id="filter-sort" class="oc-input border-0 bg-dark">
+                                    <option value="created_at_desc">Mais Recentes</option>
+                                    <option value="username_asc">Nome (A-Z)</option>
+                                    <option value="last_login_desc">Último Acesso</option>
+                                    <option value="level_desc">Nível (Maior)</option>
+                                </select>
+                                <button class="btn-oc btn-oc-outline" id="btn-refresh-users">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="oc-card p-0 overflow-hidden" data-aos="fade-up">
+                    <div id="users-loader" class="text-center py-5" style="display: none;">
+                        <div class="spinner-custom mx-auto"></div>
+                        <p class="text-muted mt-3 small">Consultando base de dados central...</p>
+                    </div>
+
+                    <div class="oc-table-container">
+                        <table class="oc-table mb-0" id="users-table">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4" style="width: 40px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="select-all-users">
+                                        </div>
+                                    </th>
+                                    <th>Identidade e ID</th>
+                                    <th>Cargo</th>
+                                    <th>Estado</th>
+                                    <th>Atividade</th>
+                                    <th>Ingresso</th>
+                                    <th class="text-end pe-4">Gestão</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Injetado dinamicamente via users-list.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div class="d-flex justify-content-between align-items-center mt-4" data-aos="fade-up">
+                    <div class="text-dim small">
+                        Padrão operacional: 10 utilizadores por página
+                    </div>
+                    <div class="pagination-wrapper" id="users-pagination">
+                        <!-- Gerado via JS -->
+                    </div>
+                </div>
+            </main>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'users/users-list' }) %>
+        </div>
+    </div>
+
+    <!-- The User Deletion/Suspension confirmation logic is handled via SweetAlert2 -->
+</body>
+</html>

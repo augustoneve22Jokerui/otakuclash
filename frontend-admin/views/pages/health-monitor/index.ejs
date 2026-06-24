@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Monitoramento de Infraestrutura', moduleStyle: 'health-monitor' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'health' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Sistema & Segurança', url: '#' },
+                        { name: 'Status da Infra', url: '/health-monitor' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1">Observabilidade de Nodes</h2>
+                        <p class="text-muted small">Monitoramento em tempo real dos serviços, banco de dados e recursos de hardware.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn-oc btn-oc-outline" id="btn-refresh-health">
+                            <i class="bi bi-arrow-clockwise me-2"></i> Forçar Varredura
+                        </button>
+                        <span class="oc-badge badge-success d-flex align-items-center" id="server-status-badge">
+                            ONLINE
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Global Health Pulse (Real-time Timeline) -->
+                <div class="oc-card mb-4 p-3 bg-dark border-secondary border-opacity-25" data-aos="fade-up">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-dim small fw-bold uppercase">Health Pulse (24h)</span>
+                        <span class="text-success small fw-bold">100% Uptime</span>
+                    </div>
+                    <div class="health-pulse-log" id="health-pulse-log">
+                        <!-- Dots injected via health.js representing periodic checks -->
+                    </div>
+                </div>
+
+                <!-- Status Cards Grid -->
+                <div class="health-overview-grid" data-aos="fade-up">
+                    <div class="status-card">
+                        <div class="status-indicator-box">
+                            <div id="db-status-pulse" class="status-pulse-green"></div>
+                        </div>
+                        <div>
+                            <small class="text-dim d-block">Base de Dados</small>
+                            <span class="text-main fw-bold" id="db-status-text">Operacional</span>
+                            <div class="service-latency mt-1">Latência: <span id="db-latency">12ms</span></div>
+                        </div>
+                    </div>
+
+                    <div class="status-card">
+                        <div class="status-indicator-box">
+                            <div id="redis-status-pulse" class="status-pulse-green"></div>
+                        </div>
+                        <div>
+                            <small class="text-dim d-block">Cache & Filas (Redis)</small>
+                            <span class="text-main fw-bold" id="redis-status-text">Operacional</span>
+                            <div class="service-latency mt-1">Memória: <span id="redis-memory">124MB</span></div>
+                        </div>
+                    </div>
+
+                    <div class="status-card">
+                        <div class="status-indicator-box">
+                            <div class="status-pulse-green"></div>
+                        </div>
+                        <div>
+                            <small class="text-dim d-block">Socket.IO Server</small>
+                            <span class="text-main fw-bold">Activo</span>
+                            <div class="service-latency mt-1">Conexões: <span id="socket-connections">0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mt-1">
+                    <!-- Column: Resource Usage -->
+                    <div class="col-xl-8 col-lg-7" data-aos="fade-up">
+                        <div class="resource-usage-container h-100">
+                            <h5 class="text-main fw-bold mb-4"><i class="bi bi-cpu me-2 text-primary"></i>Recursos do Hardware</h5>
+                            
+                            <!-- CPU Usage -->
+                            <div class="resource-row">
+                                <div class="resource-info">
+                                    <span class="resource-label">Nível de Processamento (CPU)</span>
+                                    <span class="resource-value" id="cpu-usage-val">0%</span>
+                                </div>
+                                <div class="oc-progress-track">
+                                    <div class="oc-progress-bar bar-cpu" id="cpu-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- RAM Usage -->
+                            <div class="resource-row">
+                                <div class="resource-info">
+                                    <span class="resource-label">Memória Volátil (RAM)</span>
+                                    <span class="resource-value" id="mem-usage-val">0%</span>
+                                </div>
+                                <div class="oc-progress-track">
+                                    <div class="oc-progress-bar bar-mem" id="mem-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Storage Usage -->
+                            <div class="resource-row">
+                                <div class="resource-info">
+                                    <span class="resource-label">Armazenamento em Disco</span>
+                                    <span class="resource-value" id="disk-usage-val">0%</span>
+                                </div>
+                                <div class="oc-progress-track">
+                                    <div class="oc-progress-bar bar-disk" id="disk-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Historical Usage Chart -->
+                            <div class="usage-chart-wrapper">
+                                <canvas id="chart-resource-usage"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column: External Services & Actions -->
+                    <div class="col-xl-4 col-lg-5" data-aos="fade-up">
+                        <div class="oc-card mb-4">
+                            <h6 class="text-main fw-bold mb-3">Dependências Externas</h6>
+                            <div class="services-health-list">
+                                <div class="service-item">
+                                    <div class="service-meta">
+                                        <i class="bi bi-cloud-check text-info"></i>
+                                        <span class="service-name">Supabase API</span>
+                                    </div>
+                                    <span class="oc-badge badge-success">OK</span>
+                                </div>
+                                <div class="service-item">
+                                    <div class="service-meta">
+                                        <i class="bi bi-images text-secondary"></i>
+                                        <span class="service-name">Storage (Buckets)</span>
+                                    </div>
+                                    <span class="oc-badge badge-success">OK</span>
+                                </div>
+                                <div class="service-item">
+                                    <div class="service-meta">
+                                        <i class="bi bi-code-square text-warning"></i>
+                                        <span class="service-name">Jikan API (V4)</span>
+                                    </div>
+                                    <span class="oc-badge badge-success">OK</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Node Info & Uptime -->
+                        <div class="uptime-display mb-4">
+                            <span class="text-dim small uppercase fw-bold mb-2 d-block">Tempo de Actividade (Uptime)</span>
+                            <span class="uptime-value" id="server-uptime">0 dias, 0h 0m</span>
+                        </div>
+
+                        <!-- Maintenance Actions -->
+                        <div class="oc-card">
+                            <h6 class="text-main fw-bold mb-3">Acções de Manutenção</h6>
+                            <div class="maintenance-actions">
+                                <button class="btn-oc btn-oc-outline btn-sm text-warning" id="btn-clear-cache">
+                                    <i class="bi bi-lightning-fill me-1"></i> Flush Redis
+                                </button>
+                                <button class="btn-oc btn-oc-outline btn-sm text-info" onclick="window.showAlert('Info', 'Recalculando estatísticas globais...', 'info')">
+                                    <i class="bi bi-calculator me-1"></i> Rebuild Stats
+                                </button>
+                                <button class="btn-oc btn-oc-outline btn-sm mt-2 w-100" onclick="window.location.href='/audit-logs'">
+                                    <i class="bi bi-journal-text me-1"></i> Logs de Erro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'health-monitor/health' }) %>
+        </div>
+    </div>
+</body>
+</html>

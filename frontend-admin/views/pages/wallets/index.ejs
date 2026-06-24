@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Gestão de Carteiras Digitais', moduleStyle: 'wallets' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'wallets' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Financeiro', url: '#' },
+                        { name: 'Carteiras Digitais', url: '/wallets' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1">Custódia e Saldos</h2>
+                        <p class="text-muted small">Monitorize activos digitais, processe levantamentos e realize ajustes manuais de crédito/débito.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn-oc btn-oc-outline" id="btn-refresh-withdrawals">
+                            <i class="bi bi-arrow-clockwise me-2"></i> Actualizar Pendências
+                        </button>
+                        <button class="btn-oc btn-oc-primary" id="btn-quick-adjust">
+                            <i class="bi bi-plus-slash-minus me-2"></i> Ajuste Rápido
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global Financial KPIs -->
+                <div class="wallets-overview-grid mb-5" data-aos="fade-up">
+                    <div class="wallet-card-main animate-up">
+                        <div class="wallet-balance-header">
+                            <span class="currency-label">Saldo em Circulação (Total)</span>
+                            <i class="bi bi-bank text-success fs-4"></i>
+                        </div>
+                        <div class="balance-value-large wallet-value-animate">
+                            <span id="total-circulating-balance">0,00</span>
+                            <span class="balance-symbol">AKZ</span>
+                        </div>
+                        <div class="risk-indicator mt-4">
+                            <div class="risk-level-safe"></div>
+                        </div>
+                        <small class="text-dim mt-2 d-block">Soma de todos os saldos disponíveis na plataforma.</small>
+                    </div>
+
+                    <div class="wallet-card-main animate-up" style="animation-delay: 0.1s;">
+                        <div class="wallet-balance-header">
+                            <span class="currency-label">Ativos Bloqueados (Garantia)</span>
+                            <i class="bi bi-lock-fill text-warning fs-4"></i>
+                        </div>
+                        <div class="balance-value-large text-warning">
+                            <span id="total-locked-balance">0,00</span>
+                            <span class="balance-symbol">AKZ</span>
+                        </div>
+                        <div class="progress mt-4" style="height: 4px; background: var(--bg-main);">
+                            <div class="progress-bar bg-warning" style="width: 15%;"></div>
+                        </div>
+                        <small class="text-dim mt-2 d-block">Valores em disputa ou reservados para partidas.</small>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Column: Find & Audit Specific Wallet -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="oc-card mb-4" data-aos="fade-right">
+                            <h6 class="text-main fw-bold mb-4"><i class="bi bi-search me-2 text-primary"></i>Localizar Carteira</h6>
+                            <div class="oc-input-group">
+                                <label class="oc-label">UUID do Utilizador</label>
+                                <div class="input-group">
+                                    <input type="text" id="search-wallet-userid" class="form-control bg-dark border-secondary border-opacity-25 text-white" placeholder="Insira o ID do utilizador...">
+                                    <button class="btn btn-primary" type="button" id="btn-search-wallet"><i class="bi bi-arrow-right"></i></button>
+                                </div>
+                            </div>
+
+                            <div id="wallet-search-result" class="mt-4">
+                                <!-- Search results injected via Wallets.renderWalletSearchResult() -->
+                                <div class="search-result-empty">
+                                    <i class="bi bi-wallet2 fs-1 d-block mb-2"></i>
+                                    <span class="small text-muted">Aguardando ID para auditoria...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oc-card bg-dark border-secondary border-opacity-50" data-aos="fade-up">
+                            <h6 class="text-dim fw-bold small mb-3 uppercase">Políticas de Levantamento</h6>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex gap-2 mb-2">
+                                    <i class="bi bi-check2-circle text-success"></i>
+                                    <span class="text-muted small">Prazo de liquidação: 24h úteis.</span>
+                                </li>
+                                <li class="d-flex gap-2 mb-2">
+                                    <i class="bi bi-check2-circle text-success"></i>
+                                    <span class="text-muted small">Taxa de saque: 1% (Manutenção).</span>
+                                </li>
+                                <li class="d-flex gap-2">
+                                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                                    <span class="text-muted small">Saldos bónus não são levantáveis.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Column: Pending Withdrawal Requests -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="oc-card h-100" data-aos="fade-left">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="text-main fw-bold mb-0">Solicitações de Levantamento (Pendentes)</h5>
+                                <span class="oc-badge badge-warning" id="pending-withdrawals-count">0</span>
+                            </div>
+
+                            <div class="oc-table-container">
+                                <table class="oc-table mb-0" id="withdrawals-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="ps-4">Referência</th>
+                                            <th>Utilizador</th>
+                                            <th>Montante</th>
+                                            <th>Destino (IBAN)</th>
+                                            <th>Estado</th>
+                                            <th class="text-end pe-4">Acções</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Injetado dinamicamente via Wallets.loadWithdrawalRequests() -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'wallets/wallets' }) %>
+        </div>
+    </div>
+
+    <!-- Note: Financial Adjustments and Approval flows use the Premium SweetAlert2 
+         interfaces already implemented in the wallets.js logic to maintain a clean UI. -->
+</body>
+</html>

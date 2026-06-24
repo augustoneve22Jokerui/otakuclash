@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: (typeof userId !== 'undefined' ? 'Editar Utilizador' : 'Novo Utilizador'), moduleStyle: 'users' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'users' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Breadcrumbs & Header -->
+                <%- include('../../partials/breadcrumbs', { 
+                    breadcrumbs: [
+                        { name: 'Administração', url: '#' },
+                        { name: 'Gestão de Usuários', url: '/users' },
+                        { name: (typeof userId !== 'undefined' ? 'Editar Registo' : 'Nova Conta'), url: '#' }
+                    ] 
+                }) %>
+
+                <div class="section-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-main mb-1"><%= (typeof userId !== 'undefined' ? 'Editar Utilizador' : 'Criar Novo Utilizador') %></h2>
+                        <p class="text-muted small">Configure as credenciais de acesso, nível de permissão e dados de perfil do utilizador.</p>
+                    </div>
+                    <button type="button" class="btn-oc btn-oc-outline" onclick="window.location.href='/users'">
+                        <i class="bi bi-arrow-left me-2"></i> Voltar à Lista
+                    </button>
+                </div>
+
+                <div class="user-form-container">
+                    <form id="user-registry-form">
+                        <input type="hidden" id="user-id" value="<%= typeof userId !== 'undefined' ? userId : '' %>">
+                        
+                        <div class="row g-4">
+                            <!-- Column: Avatar & Role -->
+                            <div class="col-lg-4">
+                                <div class="oc-card text-center h-100" data-aos="fade-right">
+                                    <label class="oc-label mb-3">Foto de Perfil</label>
+                                    <div class="avatar-upload-zone mx-auto mb-3" onclick="document.getElementById('avatar-input').click()">
+                                        <i class="bi bi-camera upload-icon" id="upload-placeholder-icon"></i>
+                                        <img src="" id="avatar-preview" class="d-none" alt="Preview">
+                                    </div>
+                                    <input type="file" id="avatar-input" hidden accept="image/*">
+                                    <p class="text-dim small mb-4">Recomendado: Quadrada, máx 2MB. Formatos JPG, PNG ou WebP.</p>
+
+                                    <hr class="border-secondary opacity-25">
+
+                                    <div class="oc-input-group text-start mt-4">
+                                        <label class="oc-label">Nível de Acesso (Role)</label>
+                                        <select name="role" id="user-role" class="oc-input" required>
+                                            <option value="USER">Utilizador Comum</option>
+                                            <option value="MODERATOR">Moderador de Conteúdo</option>
+                                            <option value="ADMIN">Administrador de Sistema</option>
+                                        </select>
+                                        <small class="text-muted mt-2 d-block" style="font-size: 11px;">
+                                            <i class="bi bi-info-circle me-1"></i> Administradores possuem acesso total ao financeiro e configurações.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column: Basic Info & Credentials -->
+                            <div class="col-lg-8">
+                                <div class="oc-card mb-4" data-aos="fade-up">
+                                    <h6 class="text-main fw-bold mb-4">Dados de Identidade</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="oc-input-group">
+                                                <label class="oc-label">Nome de Utilizador (Nickname)</label>
+                                                <input type="text" name="username" id="username" class="oc-input" required 
+                                                       placeholder="Ex: zoro_angola" data-validate="username">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="oc-input-group">
+                                                <label class="oc-label">Nome Completo</label>
+                                                <input type="text" name="full_name" id="full_name" class="oc-input" 
+                                                       placeholder="Nome para exibição em prémios">
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="oc-input-group mb-0">
+                                                <label class="oc-label">Endereço de E-mail</label>
+                                                <input type="email" name="email" id="email" class="oc-input" required 
+                                                       placeholder="utilizador@exemplo.com" data-validate="email">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="oc-card" data-aos="fade-up" data-aos-delay="100">
+                                    <h6 class="text-main fw-bold mb-4">Segurança da Conta</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="oc-input-group mb-md-0">
+                                                <label class="oc-label"><%= (typeof userId !== 'undefined' ? 'Nova Senha (Opcional)' : 'Senha de Acesso') %></label>
+                                                <div class="position-relative">
+                                                    <input type="password" name="password" id="password" class="oc-input" 
+                                                           placeholder="Mínimo 8 caracteres" <%= (typeof userId === 'undefined' ? 'required' : '') %>>
+                                                    <button type="button" class="btn border-0 position-absolute end-0 top-50 translate-middle-y text-dim" id="toggle-pwd">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="oc-input-group mb-0">
+                                                <label class="oc-label">Confirmar Senha</label>
+                                                <input type="password" id="password_confirmation" class="oc-input" 
+                                                       placeholder="Repita a senha" <%= (typeof userId === 'undefined' ? 'required' : '') %>>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 bg-dark rounded border border-secondary border-opacity-25">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="form-check form-switch mb-0">
+                                                <input class="form-check-input" type="checkbox" id="require-password-change" name="require_password_change">
+                                                <label class="form-check-label text-muted small" for="require-password-change">Exigir alteração de senha no primeiro login</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="d-flex gap-3 mt-5" data-aos="fade-up" data-aos-delay="200">
+                                    <button type="submit" class="btn-oc btn-oc-primary flex-grow-1 py-3" id="btn-save-user">
+                                        <i class="bi bi-cloud-check-fill me-2"></i> Finalizar Registo
+                                    </button>
+                                    <button type="button" class="btn-oc btn-oc-outline px-4" onclick="history.back()">
+                                        Descartar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </main>
+
+            <!-- Global Footer & Scripts -->
+            <%- include('../../partials/footer', { moduleScript: 'users/users-list' }) %>
+        </div>
+    </div>
+
+    <!-- UI Logic for Form Handling -->
+    <script>
+        // Preview de Imagem Local
+        document.getElementById('avatar-input')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('avatar-preview');
+                    const icon = document.getElementById('upload-placeholder-icon');
+                    preview.src = event.target.result;
+                    preview.classList.remove('d-none');
+                    icon.classList.add('d-none');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Password Visibility Toggle
+        document.getElementById('toggle-pwd')?.addEventListener('click', function() {
+            const pwd = document.getElementById('password');
+            const icon = this.querySelector('i');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                pwd.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        });
+    </script>
+</body>
+</html>

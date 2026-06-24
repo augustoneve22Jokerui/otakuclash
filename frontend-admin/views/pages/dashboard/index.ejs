@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-theme="dark">
+<head>
+    <%- include('../../partials/head-meta', { title: 'Painel de Controle', moduleStyle: 'dashboard' }) %>
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <%- include('../../partials/sidebar', { active: 'dashboard' }) %>
+
+        <div id="main-content" class="sidebar-transition">
+            <!-- Top Navbar -->
+            <%- include('../../partials/navbar') %>
+
+            <main class="content-body">
+                <!-- Header & Greetings -->
+                <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-down">
+                    <div>
+                        <h2 class="text-main mb-1">Bem-vindo, Admin! 👋</h2>
+                        <p class="text-muted small">Aqui está o resumo operacional da plataforma Otaku Clash Angola.</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-end d-none d-md-block">
+                            <div class="small text-muted">Status do Servidor</div>
+                            <div class="d-flex align-items-center justify-content-end gap-2">
+                                <span class="status-pulse-green"></span>
+                                <span class="fw-bold small text-success">OPERACIONAL</span>
+                            </div>
+                        </div>
+                        <button class="btn-oc btn-oc-outline" onclick="window.location.reload()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Quick Stats -->
+                <div class="dashboard-stats-grid mb-4">
+                    <div class="stat-card hover-lift animate-up" style="animation-delay: 0.1s;">
+                        <div class="stat-card-icon"><i class="bi bi-people"></i></div>
+                        <div class="stat-card-value" id="total-users-count">0</div>
+                        <div class="stat-card-label">Usuários Totais</div>
+                        <div id="users-growth" class="stat-card-growth">--</div>
+                    </div>
+                    <div class="stat-card hover-lift animate-up" style="animation-delay: 0.2s;">
+                        <div class="stat-card-icon primary"><i class="bi bi-person-badge"></i></div>
+                        <div class="stat-card-value" id="online-users-count">0</div>
+                        <div class="stat-card-label">Online Agora</div>
+                        <div class="text-success small"><i class="bi bi-broadcast"></i> Ao vivo</div>
+                    </div>
+                    <div class="stat-card hover-lift animate-up" style="animation-delay: 0.3s;">
+                        <div class="stat-card-icon"><i class="bi bi-controller"></i></div>
+                        <div class="stat-card-value" id="active-matches-count">0</div>
+                        <div class="stat-card-label">Partidas Ativas</div>
+                        <div class="text-dim small">Duelos e Battle Royale</div>
+                    </div>
+                    <div class="stat-card hover-lift animate-up" style="animation-delay: 0.4s;">
+                        <div class="stat-card-icon text-success"><i class="bi bi-wallet2"></i></div>
+                        <div class="stat-card-value" id="revenue-total">0.00 KZ</div>
+                        <div class="stat-card-label">Receita Estimada</div>
+                        <div id="revenue-growth" class="stat-card-growth">--</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-main-grid">
+                    <!-- Column: Analytics & Charts -->
+                    <div class="dashboard-primary-column">
+                        <div class="row g-4">
+                            <!-- New Users Growth -->
+                            <div class="col-12" data-aos="fade-up">
+                                <div class="oc-card">
+                                    <div class="oc-card-header">
+                                        <h5 class="oc-card-title">Crescimento da Comunidade</h5>
+                                        <select class="oc-input border-0 bg-dark small py-1" style="width: auto;">
+                                            <option>Últimos 7 dias</option>
+                                            <option>Últimos 30 dias</option>
+                                        </select>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="chart-new-users"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Financial Revenue Chart -->
+                            <div class="col-md-7" data-aos="fade-up">
+                                <div class="oc-card h-100">
+                                    <div class="oc-card-header">
+                                        <h5 class="oc-card-title">Fluxo Financeiro (AKZ)</h5>
+                                        <i class="bi bi-info-circle text-dim" title="Baseado em taxas de entrada e depósitos"></i>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="chart-revenue"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Catalog Content Status -->
+                            <div class="col-md-5" data-aos="fade-up">
+                                <div class="oc-card h-100">
+                                    <h5 class="oc-card-title mb-4">Banco de Questões</h5>
+                                    <div class="chart-container" style="height: 200px;">
+                                        <canvas id="chart-difficulty"></canvas>
+                                    </div>
+                                    <div class="distribution-info mt-4">
+                                        <div class="dist-item">
+                                            <span class="dist-label"><span class="dist-color-dot bg-success"></span> Fácil</span>
+                                            <span class="text-main fw-bold">35%</span>
+                                        </div>
+                                        <div class="dist-item">
+                                            <span class="dist-label"><span class="dist-color-dot bg-warning"></span> Médio</span>
+                                            <span class="text-main fw-bold">40%</span>
+                                        </div>
+                                        <div class="dist-item">
+                                            <span class="dist-label"><span class="dist-color-dot bg-danger"></span> Difícil</span>
+                                            <span class="text-main fw-bold">25%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column: Real-time Feed & Shortcuts -->
+                    <div class="dashboard-side-column">
+                        <!-- Real-time Activity Feed -->
+                        <div class="oc-card mb-4" data-aos="fade-left">
+                            <div class="oc-card-header">
+                                <h5 class="oc-card-title">Atividade Global</h5>
+                                <span class="badge bg-primary-soft text-primary animate-pulse" style="font-size: 10px;">LIVE</span>
+                            </div>
+                            <div class="activity-feed-container mt-3" id="realtime-activity-feed">
+                                <!-- Populated via dashboard.js + Socket.IO -->
+                                <div class="text-center py-4 text-muted small">Aguardando eventos...</div>
+                            </div>
+                        </div>
+
+                        <!-- System Alerts -->
+                        <div class="oc-card mb-4" data-aos="fade-left" data-aos-delay="100">
+                            <h5 class="oc-card-title mb-3">Alertas Críticos</h5>
+                            <div id="dashboard-alerts">
+                                <!-- Automated alerts for server storage, payment errors, etc. -->
+                                <div class="text-center py-3">
+                                    <i class="bi bi-shield-check text-success fs-2 d-block mb-2"></i>
+                                    <span class="text-muted small">Nenhuma anomalia detectada</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Navigation -->
+                        <div class="oc-card" data-aos="fade-left" data-aos-delay="200">
+                            <h5 class="oc-card-title mb-3">Ações de Curadoria</h5>
+                            <div class="quick-nav-grid">
+                                <a href="/questions/new" class="btn-quick-nav">
+                                    <i class="bi bi-patch-question"></i>
+                                    <span>Add Questão</span>
+                                </a>
+                                <a href="/reports" class="btn-quick-nav">
+                                    <i class="bi bi-shield-exclamation"></i>
+                                    <span>Denúncias</span>
+                                </a>
+                                <a href="/tournaments" class="btn-quick-nav">
+                                    <i class="bi bi-trophy"></i>
+                                    <span>Novo Torneio</span>
+                                </a>
+                                <a href="/audit-logs" class="btn-quick-nav">
+                                    <i class="bi bi-receipt-cutoff"></i>
+                                    <span>Logs Staff</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Global Footer -->
+            <%- include('../../partials/footer', { moduleScript: 'dashboard/dashboard' }) %>
+        </div>
+    </div>
+</body>
+</html>

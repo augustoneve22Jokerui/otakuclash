@@ -1,0 +1,124 @@
+<!-- 
+ * OTAKU CLASH ANGOLA - GLOBAL MODALS SYSTEM
+ * Senior UI Designer: Reusable UI Components & Dialog Architecture
+-->
+
+<!-- 1. Image Preview Modal (Lightbox Style) -->
+<!-- Utilizado para visualizar capas de animes, badges e avatares em tamanho real -->
+<div class="modal fade" id="oc-image-preview-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-header border-0 p-0 position-absolute top-0 end-0 m-3" style="z-index: 1060;">
+                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 text-center">
+                <img src="" id="global-preview-img" class="img-fluid rounded-md shadow-lg animate-scale" style="max-height: 85vh;">
+                <div id="global-preview-caption" class="text-white mt-3 fw-bold small text-uppercase letter-spacing-1"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Session Timeout Modal -->
+<!-- Acionado via JS (app.js) quando o token está prestes a expirar -->
+<div class="modal fade" id="oc-session-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-lock-fill text-warning"></i> Sessão Expirando
+                </h5>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="session-timer-visual mb-3">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <p class="text-main mb-1">Sua sessão administrativa expirará em breve.</p>
+                <p class="text-muted small">Deseja continuar conectado ao painel?</p>
+            </div>
+            <div class="modal-footer border-secondary bg-main">
+                <button type="button" class="btn-oc btn-oc-outline w-100" onclick="Auth.logout()">Sair Agora</button>
+                <button type="button" class="btn-oc btn-oc-primary w-100" onclick="Auth.refreshSession()">Manter Conectado</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Technical Support Quick Link Modal -->
+<div class="modal fade" id="oc-support-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Suporte ao Administrador</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="support-channels">
+                    <a href="https://t.me/otakuclashdev" target="_blank" class="support-item d-flex align-items-center p-3 mb-3 rounded-md bg-main border border-secondary text-decoration-none">
+                        <div class="support-icon me-3 text-info"><i class="bi bi-telegram fs-3"></i></div>
+                        <div>
+                            <strong class="text-main d-block">DevOps Telegram</strong>
+                            <small class="text-muted">Canal direto para bugs críticos e infra.</small>
+                        </div>
+                    </a>
+                    <a href="mailto:tech@otakuclashangola.com" class="support-item d-flex align-items-center p-3 rounded-md bg-main border border-secondary text-decoration-none">
+                        <div class="support-icon me-3 text-primary"><i class="bi bi-envelope-at fs-3"></i></div>
+                        <div>
+                            <strong class="text-main d-block">E-mail Corporativo</strong>
+                            <small class="text-muted">Solicitação de novas funcionalidades.</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <p class="text-dim small w-100 text-center mb-0">Otaku Clash Angola Admin v<%= version %></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Global Modal Enhancements */
+    .modal-content {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        border-radius: var(--border-radius-lg);
+    }
+
+    .modal-header .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .support-item {
+        transition: all var(--transition-speed);
+    }
+
+    .support-item:hover {
+        border-color: var(--secondary-color) !important;
+        background: rgba(124, 77, 255, 0.05) !important;
+        transform: translateY(-2px);
+    }
+
+    .session-timer-visual {
+        position: relative;
+        display: inline-block;
+    }
+</style>
+
+<script>
+    /**
+     * Helper global para acionar o preview de imagem
+     * Pode ser chamado de qualquer módulo: OCModals.showImage(url, caption)
+     */
+    const OCModals = {
+        showImage: function(url, caption = '') {
+            const modal = new bootstrap.Modal(document.getElementById('oc-image-preview-modal'));
+            document.getElementById('global-preview-img').src = url;
+            document.getElementById('global-preview-caption').innerText = caption;
+            modal.show();
+        }
+    };
+</script>
