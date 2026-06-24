@@ -1,6 +1,6 @@
 /**
  * 🔐 OTAKU CLASH ANGOLA - AUTHENTICATION MANAGER
- * Versão: 2.0.0 - Enterprise Secured
+ * Versão: 2.2.0 - Stable Redirection Edition
  * Senior Security & Frontend Engineer: Session & Identity Management
  */
 
@@ -13,32 +13,37 @@ const AuthManager = {
     },
 
     /**
-     * 💾 SALVA SESSÃO (LOGIN)
+     * 💾 SALVA SESSÃO (PERSISTÊNCIA PÓS-LOGIN)
      * @param {Object} tokens - { accessToken, refreshToken }
      * @param {Object} user - Dados do perfil administrativo
      */
     saveSession(tokens, user) {
-        if (!tokens || !tokens.accessToken) {
-            console.error('[Auth] Falha ao salvar: Tokens ausentes.');
+        try {
+            if (!tokens || !tokens.accessToken) {
+                console.error('[Auth] Erro: Tentativa de salvar sessão sem token válido.');
+                return false;
+            }
+
+            localStorage.setItem(this.STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken);
+            
+            if (tokens.refreshToken) {
+                localStorage.setItem(this.STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken);
+            }
+
+            if (user) {
+                localStorage.setItem(this.STORAGE_KEYS.USER_DATA, JSON.stringify(user));
+            }
+
+            console.log('[Auth] Sessão administrativa persistida.');
+            return true;
+        } catch (error) {
+            console.error('[Auth] Erro ao acessar localStorage:', error);
             return false;
         }
-
-        localStorage.setItem(this.STORAGE_KEYS.ACCESS_TOKEN, tokens.accessToken);
-        
-        if (tokens.refreshToken) {
-            localStorage.setItem(this.STORAGE_KEYS.REFRESH_TOKEN, tokens.refreshToken);
-        }
-
-        if (user) {
-            localStorage.setItem(this.STORAGE_KEYS.USER_DATA, JSON.stringify(user));
-        }
-
-        console.log('[Auth] Sessão persistida com sucesso.');
-        return true;
     },
 
     /**
-     * 🎟️ RECUPERA ACCESS TOKEN
+     * 🎟️ RECUPERA ACCESS TOKEN (JWT)
      */
     getAccessToken() {
         return localStorage.getItem(this.STORAGE_KEYS.ACCESS_TOKEN);
@@ -52,28 +57,31 @@ const AuthManager = {
     },
 
     /**
-     * 👤 RECUPERA DADOS DO UTILIZADOR
+     * 👤 RECUPERA DADOS DO UTILIZADOR LOGADO
      */
     getUser() {
         const user = localStorage.getItem(this.STORAGE_KEYS.USER_DATA);
         try {
             return user ? JSON.parse(user) : null;
         } catch (e) {
+            console.error('[Auth] Erro ao parsear dados do utilizador.');
             return null;
         }
     },
 
     /**
-     * ✅ VERIFICA SE ESTÁ AUTENTICADO
-     * Valida presença do token e expiração temporal (client-side check).
+     * ✅ VERIFICA INTEGRIDADE DA SESSÃO (CLIENT-SIDE)
+     * Realiza o parse do JWT para verificar a expiração sem bater na API.
      */
     isAuthenticated() {
         const token = this.getAccessToken();
-        if (!token) return false;
+        if (!token || token === 'undefined' || token === 'null') return false;
 
         try {
-            // Decodifica o payload do JWT (Parte central do token)
+            // Decodifica a parte do payload do JWT (Base64)
             const base64Url = token.split('.')[1];
+            if (!base64Url) return false;
+
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
             const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -82,57 +90,62 @@ const AuthManager = {
             const payload = JSON.parse(jsonPayload);
             const now = Math.floor(Date.now() / 1000);
 
-            // Verifica se o token ainda é válido por pelo menos mais 10 segundos
+            // Verifica se o token expira em menos de 10 segundos
             return payload.exp > (now + 10);
         } catch (e) {
-            console.error('[Auth] Erro ao validar expiração do token:', e);
+            console.error('[Auth] Falha na validação do token local:', e);
             return false;
         }
     },
 
     /**
-     * 🚪 LOGOUT GLOBAL
-     * Limpa armazenamento e redireciona para login.
+     * 🚪 LOGOUT (ENCERRAMENTO DE SESSÃO)
+     * Limpa o storage e limpa o estado do Socket.IO.
      */
     logout() {
         console.log('[Auth] Encerrando sessão administrativa...');
         
+        // 1. Limpa chaves de segurança
         localStorage.removeItem(this.STORAGE_KEYS.ACCESS_TOKEN);
         localStorage.removeItem(this.STORAGE_KEYS.REFRESH_TOKEN);
         localStorage.removeItem(this.STORAGE_KEYS.USER_DATA);
         
-        // Desconecta o socket se estiver ativo
-        if (window.Socket) {
+        // 2. Desconecta o Socket.IO se estiver instanciado
+        if (window.Socket && typeof window.Socket.disconnect === 'function') {
             window.Socket.disconnect();
         }
 
-        // Redirecionamento forçado para a raiz (Login)
+        // 3. Redireciona para o login apenas se não estiver na página de login
         if (window.location.pathname !== '/login') {
-            window.location.href = '/login';
+            window.location.replace('/login');
         }
     },
 
     /**
-     * 🛡️ ROUTE GUARD (CLIENT-SIDE)
-     * Garante que páginas protegidas exijam login.
+     * 🛡️ PROTEÇÃO DE ROTA (ROUTE GUARD)
+     * Controla o fluxo de redirecionamento para evitar loops.
      */
     checkAuth() {
-        const isLoginPage = window.location.pathname === '/login';
+        const path = window.location.pathname;
+        const isLoginPage = path === '/login' || path === '/';
         const authenticated = this.isAuthenticated();
 
+        // Cenário A: Utilizador não logado tentando acessar dashboard
         if (!authenticated && !isLoginPage) {
-            console.warn('[Auth] Acesso negado: Redirecionando para login.');
-            this.logout();
+            console.warn('[Auth] Acesso restrito: Identidade expirada ou ausente.');
+            return this.logout();
         }
 
+        // Cenário B: Utilizador logado tentando acessar página de login
         if (authenticated && isLoginPage) {
-            window.location.href = '/dashboard';
+            console.log('[Auth] Utilizador já autenticado. Redirecionando para Dashboard.');
+            window.location.replace('/dashboard');
         }
     },
 
     /**
-     * ✍️ ATUALIZAÇÃO PARCIAL DE DADOS
-     * Utilizado após mudar avatar ou nome no perfil.
+     * ✍️ ATUALIZADOR DE ESTADO LOCAL
+     * Sincroniza mudanças no perfil com o storage.
      */
     updateUserData(newData) {
         const current = this.getUser();
@@ -145,27 +158,28 @@ const AuthManager = {
     },
 
     /**
-     * ♻️ RENOVAÇÃO MANUAL (DASHBOARD ACTION)
-     * Utilizado pelo interceptor de API ou modal de timeout.
+     * ♻️ RENOVAÇÃO MANUAL DE SESSÃO
+     * Pode ser chamado via UI ou via interceptor de API.
      */
     async refreshSession() {
         const rToken = this.getRefreshToken();
         if (!rToken) return this.logout();
 
         try {
-            // Chamada direta via Axios para evitar recursividade no apiClient
-            const res = await axios.post(`${window.API_URL}/auth/refresh`, {
+            // Chamada direta para evitar recursividade no apiClient
+            const response = await axios.post(`${window.API_URL}/auth/refresh`, {
                 refreshToken: rToken
             });
 
-            if (res.data && res.data.status === 'success') {
-                const newAccess = res.data.data.accessToken;
+            if (response.data && response.data.status === 'success') {
+                const newAccess = response.data.data.accessToken;
                 localStorage.setItem(this.STORAGE_KEYS.ACCESS_TOKEN, newAccess);
-                console.log('[Auth] Token renovado pro-ativamente.');
+                console.log('[Auth] Token renovado com sucesso.');
                 return true;
             }
+            throw new Error('Falha na resposta do servidor.');
         } catch (err) {
-            console.error('[Auth] Falha crítica na renovação pro-ativa.');
+            console.error('[Auth] Falha crítica ao renovar sessão:', err.message);
             this.logout();
             return false;
         }
@@ -173,10 +187,10 @@ const AuthManager = {
 };
 
 /**
- * ⚡ EXECUÇÃO IMEDIATA
- * Garante proteção de rota antes do carregamento total do DOM.
+ * ⚡ EXECUÇÃO DE SEGURANÇA IMEDIATA
+ * Protege a interface antes mesmo do carregamento total do DOM.
  */
 AuthManager.checkAuth();
 
-// Exposição global para os módulos
+// Expõe globalmente para os módulos de interface
 window.Auth = AuthManager;
