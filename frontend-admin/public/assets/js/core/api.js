@@ -12,7 +12,7 @@ const apiClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-App-Version': window.APP_VERSION || '2.0.0'
+        'x-app-version': window.APP_VERSION || '2.0.0' // Use minúsculo para consistência CORS
     }
 });
 
