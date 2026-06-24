@@ -1,13 +1,14 @@
 /**
  * 🔗 OTAKU CLASH ANGOLA - API CORE CLIENT
- * Versão: 2.1.2 - Sincronização de Estado de Refresh & Resilient Auth Flow
- * Descrição: Gerenciador de requisições Axios com interceptors, proteção contra loops e tratamento visual de erros.
+ * Versão: 2.1.3 - URL Normalization Fix & Resilient Auth Flow
+ * Descrição: Gerenciador de requisições Axios com interceptors, normalização de rotas, proteção contra loops e tratamento visual de erros.
  */
 
-const API_BASE_URL = window.API_URL || 'https://otakuclashaangola.onrender.com/api/v1';
+// Garante que não haja barras duplas no final da URL base
+const BASE_URL_CLEAN = (window.API_URL || 'https://otakuclashaangola.onrender.com/api/v1').replace(/\/+$/, '');
 
 const apiClient = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: BASE_URL_CLEAN,
     timeout: 20000,
     headers: {
         'Content-Type': 'application/json',
@@ -18,7 +19,7 @@ const apiClient = axios.create({
 
 /**
  * 🔒 INTERCEPTOR DE REQUISIÇÃO
- * Injeta dinamicamente o Bearer Token antes do disparo de qualquer rota.
+ * Injeta dinamicamente o Bearer Token e normaliza o caminho da URL.
  */
 apiClient.interceptors.request.use(
     (config) => {
@@ -26,6 +27,12 @@ apiClient.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        
+        // Remove barras iniciais duplicadas na requisição para evitar rotas malformadas
+        if (config.url) {
+            config.url = config.url.replace(/^\/+/, '/');
+        }
+
         return config;
     },
     (error) => Promise.reject(error)
@@ -43,12 +50,12 @@ apiClient.interceptors.response.use(
         const originalRequest = error.config;
 
         // 🚨 CASO ESPECIAL: Se o erro ocorrer na rota de login, não fazemos logout nem refresh
-        if (originalRequest.url.includes('/auth/login')) {
+        if (originalRequest.url && originalRequest.url.includes('/auth/login')) {
             return Promise.reject(error);
         }
 
         // 1. TRATAMENTO DE TOKEN EXPIRADO EM ROTAS PROTEGIDAS (401)
-        if (error.response && error.response.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/')) {
+        if (error.response && error.response.status === 401 && !originalRequest._retry && originalRequest.url && !originalRequest.url.includes('/auth/')) {
             
             // Se já for uma tentativa de refresh que falhou, encerra a sessão imediatamente
             if (originalRequest.url.includes('/auth/refresh')) {
@@ -71,7 +78,7 @@ apiClient.interceptors.response.use(
                         return Promise.reject(error);
                     }
 
-                    const refreshResponse = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+                    const refreshResponse = await axios.post(`${BASE_URL_CLEAN}/auth/refresh`, {
                         refreshToken: rToken
                     });
 
@@ -96,7 +103,7 @@ apiClient.interceptors.response.use(
 
         // 2. FORMATAÇÃO E EXIBIÇÃO DE MENSAGENS DE ERRO PARA O UI (SWEETALERT2)
         // Só exibe o alerta automático se não for login e se a requisição não pedir silêncio (silent: true)
-        if (!originalRequest.url.includes('/auth/login') && !originalRequest.silent) {
+        if (originalRequest.url && !originalRequest.url.includes('/auth/login') && !originalRequest.silent) {
             let errorMessage = 'Ocorreu um erro na comunicação com o servidor.';
             
             if (error.response && error.response.data) {
