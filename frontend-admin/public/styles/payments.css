@@ -1,0 +1,197 @@
+/* 
+ * OTAKU CLASH ANGOLA - PAYMENTS & GATEWAY MANAGEMENT STYLES
+ * Senior UI Designer: Financial Ecosystem & Fintech UX
+ */
+
+/* 1. Financial Dashboard Overview */
+.payments-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.financial-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.financial-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at bottom right, rgba(0, 209, 255, 0.05) 0%, transparent 70%);
+}
+
+/* 2. Gateway Configuration Cards */
+.gateway-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.gateway-card {
+    border-top: 3px solid var(--secondary-color);
+    transition: transform var(--transition-speed);
+}
+
+.gateway-card:hover {
+    transform: translateY(-5px);
+}
+
+.gateway-logo-bg {
+    width: 60px;
+    height: 60px;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.25rem;
+}
+
+/* 3. Transaction List Specifics */
+.amount-cell {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.5px;
+}
+
+.amount-positive { color: var(--success); }
+.amount-negative { color: var(--primary-color); }
+
+.tx-reference {
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.02);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* 4. Withdrawal Request Handling (IBAN UI) */
+.withdrawal-request-box {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.iban-display {
+    font-family: 'Monaco', monospace;
+    font-size: 1rem;
+    color: var(--text-main);
+    background: #000;
+    padding: 10px 15px;
+    border-radius: var(--border-radius-sm);
+    display: block;
+    margin: 10px 0;
+    border-left: 3px solid var(--success);
+}
+
+/* 5. Payment Webhook Logs */
+.webhook-log-container {
+    background: #050508;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.log-entry-json {
+    font-size: 0.75rem;
+    color: var(--success);
+    margin: 0;
+}
+
+/* 6. Receipt & Invoice View (Audit Detail) */
+.payment-receipt-view {
+    padding: 2rem;
+    background: var(--bg-card);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.receipt-header {
+    text-align: center;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.receipt-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 5rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.03);
+    pointer-events: none;
+    text-transform: uppercase;
+}
+
+/* 7. Fee and Commission Indicators */
+.fee-badge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    background: rgba(255, 171, 45, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(255, 171, 45, 0.2);
+    border-radius: 4px;
+}
+
+/* 8. Modal Financial Forms */
+.currency-input-group .input-group-text {
+    background-color: var(--bg-main);
+    border-color: var(--border-color);
+    color: var(--text-dim);
+    font-weight: 700;
+}
+
+/* 9. Responsividade */
+@media (max-width: 991.98px) {
+    .gateway-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .payments-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 10. Animation for Transaction Updates */
+@keyframes flash-success {
+    0% { background-color: rgba(0, 209, 255, 0.1); }
+    100% { background-color: transparent; }
+}
+
+.tx-row-new {
+    animation: flash-success 2s ease-out forwards;
+}
+
+/* Bank Logos Miniatures */
+.bank-icon-sm {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    margin-right: 8px;
+}

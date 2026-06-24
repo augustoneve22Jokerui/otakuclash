@@ -1,0 +1,213 @@
+/* 
+ * OTAKU CLASH ANGOLA - USERS MODULE STYLES
+ * Senior UI Designer: User Management & Profile UX
+ */
+
+/* 1. Lista de Usuários (Tabela Específica) */
+.user-table-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+}
+
+.user-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-id-badge {
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Estados de Linha */
+.oc-table tbody tr.user-suspended {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+}
+
+.oc-table tbody tr.user-admin {
+    border-left: 3px solid var(--primary-color);
+}
+
+/* 2. Visualização de Detalhes do Usuário (Profile Page) */
+.user-details-header {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.user-cover-photo {
+    height: 200px;
+    width: 100%;
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+}
+
+.user-profile-info-wrapper {
+    display: flex;
+    align-items: flex-end;
+    margin-top: -60px;
+    padding: 0 2rem;
+    gap: 1.5rem;
+}
+
+.user-main-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--border-radius-md);
+    border: 5px solid var(--bg-main);
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-md);
+    object-fit: cover;
+}
+
+.user-title-area {
+    padding-bottom: 10px;
+}
+
+.user-title-area h2 {
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 3. Cards de Estatísticas do Usuário */
+.user-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.user-stat-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 1.25rem;
+    text-align: center;
+    transition: var(--transition-speed);
+}
+
+.user-stat-box:hover {
+    border-color: var(--secondary-color);
+    transform: translateY(-3px);
+}
+
+.user-stat-label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.user-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* 4. Abas de Conteúdo do Perfil */
+.user-content-tabs {
+    margin-top: 2rem;
+}
+
+.user-activity-log {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* 5. Estilo para Formulário de Usuário (Criação/Edição) */
+.user-form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.avatar-upload-zone {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-speed);
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-upload-zone:hover {
+    border-color: var(--primary-color);
+    background: rgba(255, 59, 92, 0.05);
+}
+
+.avatar-upload-zone img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.upload-icon {
+    font-size: 2rem;
+    color: var(--text-dim);
+}
+
+/* 6. Wallet Shortcut no Perfil */
+.user-wallet-card {
+    background: linear-gradient(135deg, #1e1e30 0%, #131320 100%);
+    border-left: 4px solid var(--success);
+}
+
+.balance-display {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    color: var(--success);
+    font-weight: 700;
+}
+
+/* 7. Responsividade Mobile */
+@media (max-width: 768px) {
+    .user-profile-info-wrapper {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: -40px;
+    }
+
+    .user-main-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .user-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 8. Badge de Rank/Tier no Perfil */
+.user-tier-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(124, 77, 255, 0.1);
+    border: 1px solid rgba(124, 77, 255, 0.2);
+    border-radius: 30px;
+    font-weight: 600;
+    color: var(--secondary-color);
+}

@@ -1,0 +1,159 @@
+/* 
+ * OTAKU CLASH ANGOLA - LIGHT THEME REFINEMENTS
+ * Senior UI Designer: Light Mode Specialization
+ */
+
+[data-theme="light"] {
+    /* Backgrounds e Superfícies */
+    --bg-main: #F7F8FC;
+    --bg-card: #FFFFFF;
+    --bg-sidebar: #FFFFFF;
+    --bg-navbar: rgba(247, 248, 252, 0.85);
+    --bg-input: #FFFFFF;
+    
+    /* Bordas e Divisores */
+    --border-color: #E8EAF2;
+    --divider-color: #F0F1F7;
+
+    /* Cores de Texto */
+    --text-main: #1B1D2A;
+    --text-muted: #6E7191;
+    --text-dim: #A0A3BD;
+
+    /* Sombras Suaves */
+    --shadow-sm: 0 2px 8px rgba(27, 29, 42, 0.04);
+    --shadow-md: 0 8px 24px rgba(27, 29, 42, 0.08);
+}
+
+/* Aplicando estilos específicos do Light Mode */
+[data-theme="light"] body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* Sidebar Light Style */
+[data-theme="light"] .sidebar {
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .sidebar .nav-link {
+    color: var(--text-muted);
+}
+
+[data-theme="light"] .sidebar .nav-link:hover,
+[data-theme="light"] .sidebar .nav-link.active {
+    color: var(--primary-color);
+    background: linear-gradient(90deg, rgba(255, 59, 92, 0.05) 0%, rgba(255, 59, 92, 0) 100%);
+}
+
+/* Navbar Glass Effect Light */
+[data-theme="light"] .navbar-custom {
+    background: var(--bg-navbar);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Cards Light */
+[data-theme="light"] .oc-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .oc-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-color);
+}
+
+/* Inputs e Forms Light */
+[data-theme="light"] .form-control, 
+[data-theme="light"] .form-select,
+[data-theme="light"] .oc-input {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-main);
+}
+
+[data-theme="light"] .form-control:focus {
+    background-color: #FFFFFF;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.25rem rgba(124, 77, 255, 0.1);
+}
+
+/* Tabelas Light */
+[data-theme="light"] .table {
+    color: var(--text-main);
+}
+
+[data-theme="light"] .table thead th {
+    background-color: #F9FAFF;
+    border-bottom-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+[data-theme="light"] .table td {
+    border-bottom-color: var(--divider-color);
+}
+
+[data-theme="light"] .oc-table tbody tr:hover {
+    background-color: #F9FAFF;
+}
+
+/* Widgets e Stats Light */
+[data-theme="light"] .stat-card-icon {
+    background: #F3EFFF;
+    color: var(--secondary-color);
+}
+
+/* Dropdowns Light */
+[data-theme="light"] .dropdown-menu {
+    background-color: #FFFFFF;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .dropdown-item {
+    color: var(--text-main);
+}
+
+[data-theme="light"] .dropdown-item:hover {
+    background-color: #F7F8FC;
+    color: var(--primary-color);
+}
+
+/* Modal Light */
+[data-theme="light"] .modal-content {
+    background-color: #FFFFFF;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+/* Badges e Tags Soft */
+[data-theme="light"] .badge-soft-primary {
+    background: #FFF0F2;
+    color: var(--primary-color);
+}
+
+/* Scrollbars Light */
+[data-theme="light"] ::-webkit-scrollbar-track {
+    background: #F1F1F1;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: #D1D1D1;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: #A1A1A1;
+}
+
+/* Ajuste de contraste para textos secundários em modo claro */
+[data-theme="light"] .text-muted {
+    color: #6E7191 !important;
+}

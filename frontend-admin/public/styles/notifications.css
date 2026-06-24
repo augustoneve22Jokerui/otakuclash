@@ -1,0 +1,204 @@
+/* 
+ * OTAKU CLASH ANGOLA - NOTIFICATIONS & ALERTS CENTER STYLES
+ * Senior UI Designer: Real-time Communication & Messaging UX
+ */
+
+/* 1. Notifications Center Layout */
+.notifications-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* 2. Notification List & Item Architecture */
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.notification-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 1.25rem;
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    transition: all var(--transition-speed);
+    position: relative;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    border-color: var(--secondary-color);
+    background: rgba(124, 77, 255, 0.02);
+    transform: translateX(5px);
+}
+
+/* 3. Read vs Unread States */
+.notification-item.unread {
+    border-left: 4px solid var(--primary-color);
+    background: rgba(255, 59, 92, 0.02);
+}
+
+.unread-indicator {
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+/* 4. Category Icons & Backgrounds */
+.notify-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+}
+
+.type-system { color: var(--info); border-color: rgba(124, 77, 255, 0.3); }
+.type-wallet { color: var(--success); border-color: rgba(0, 209, 255, 0.3); }
+.type-match  { color: var(--primary-color); border-color: rgba(255, 59, 92, 0.3); }
+.type-guild  { color: var(--secondary-color); border-color: rgba(124, 77, 255, 0.3); }
+.type-alert  { color: var(--warning); border-color: rgba(255, 171, 45, 0.3); }
+
+/* 5. Notification Content Typography */
+.notify-content {
+    flex-grow: 1;
+}
+
+.notify-title {
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.notify-message {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+}
+
+.notify-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+}
+
+/* 6. Action Controls within Item */
+.notify-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity var(--transition-speed);
+}
+
+.notification-item:hover .notify-actions {
+    opacity: 1;
+}
+
+/* 7. Dropdown Preview (Navbar Version) */
+.navbar-notify-dropdown {
+    width: 380px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.notify-dropdown-header {
+    padding: 1rem 1.25rem;
+    background: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notify-dropdown-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notify-mini-item {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    gap: 12px;
+}
+
+.notify-mini-item:last-child { border-bottom: none; }
+
+/* 8. Broadcaster / Global Sender Form */
+.notification-sender-panel {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    margin-bottom: 3rem;
+}
+
+.target-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* 9. Toast / SweetAlert2 Customizations */
+.oc-toast {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius-md) !important;
+    color: var(--text-main) !important;
+}
+
+.oc-toast-title { color: var(--text-main) !important; }
+.oc-toast-content { color: var(--text-muted) !important; }
+
+/* 10. Responsividade */
+@media (max-width: 768px) {
+    .notification-item {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .notify-icon-box {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .target-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .navbar-notify-dropdown {
+        width: calc(100vw - 20px);
+        position: fixed;
+        left: 10px;
+        right: 10px;
+    }
+}
+
+/* Animations for new notifications */
+@keyframes notify-entrance {
+    0% { transform: scale(0.9) translateX(20px); opacity: 0; }
+    100% { transform: scale(1) translateX(0); opacity: 1; }
+}
+
+.notification-item.new-arrival {
+    animation: notify-entrance 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}

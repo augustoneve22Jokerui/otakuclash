@@ -1,0 +1,240 @@
+/* 
+ * OTAKU CLASH ANGOLA - LEADERBOARDS & GLOBAL RANKINGS STYLES
+ * Senior UI Designer: Competitive Integrity & Hall of Fame UX
+ */
+
+/* 1. Podium Visualization (Top 3 Elite) */
+.rank-podium-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1.5rem;
+    padding: 3rem 1rem;
+    background: radial-gradient(circle at center, rgba(124, 77, 255, 0.08) 0%, transparent 70%);
+    margin-bottom: 3rem;
+    min-height: 380px;
+}
+
+.podium-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    position: relative;
+    transition: all var(--transition-speed);
+    width: 100%;
+    max-width: 180px;
+}
+
+/* Specific heights and scales for the top 3 */
+.podium-first {
+    height: 280px;
+    z-index: 3;
+    border-color: var(--warning);
+    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.1);
+    transform: translateY(-20px);
+}
+
+.podium-side {
+    height: 220px;
+    z-index: 2;
+}
+
+.podium-first .podium-avatar {
+    width: 90px;
+    height: 90px;
+    border: 4px solid var(--warning);
+}
+
+.podium-side .podium-avatar {
+    width: 70px;
+    height: 70px;
+    border: 3px solid var(--text-dim);
+}
+
+/* 2. Podium Decorations (Crowns & Badges) */
+.crown {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: var(--warning);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+.podium-avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.podium-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-main);
+}
+
+.podium-rank-badge {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #FFFFFF;
+}
+
+.podium-first .podium-rank-badge { background: var(--warning); color: #000; }
+.podium-side .podium-rank-badge { background: var(--secondary-color); }
+
+/* 3. Ranking Table Specifics */
+.leaderboard-table-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+}
+
+.rank-pos-cell {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+    color: var(--text-dim);
+}
+
+.oc-table tbody tr:nth-child(-n+3) .rank-pos-cell {
+    color: var(--primary-color);
+}
+
+/* 4. Score & XP Typography */
+.xp-accumulated {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    color: var(--text-main);
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+}
+
+.xp-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+/* 5. Rank Period Filters Navigation */
+.rank-tabs-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.rank-tab-btn {
+    padding: 10px 25px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.rank-tab-btn:hover {
+    border-color: var(--secondary-color);
+}
+
+.rank-tab-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #FFFFFF;
+    box-shadow: 0 4px 15px rgba(255, 59, 92, 0.3);
+}
+
+/* 6. Elite Badge Effects (Tiers in Ranking) */
+.tier-icon-small {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* 7. Responsividade */
+@media (max-width: 768px) {
+    .rank-podium-container {
+        gap: 0.5rem;
+        min-height: 320px;
+        padding-top: 4rem;
+    }
+
+    .podium-item {
+        padding: 1rem 0.5rem;
+    }
+
+    .podium-first { height: 220px; }
+    .podium-side { height: 180px; }
+
+    .podium-first .podium-avatar { width: 70px; height: 70px; }
+    .podium-side .podium-avatar { width: 50px; height: 50px; }
+
+    .rank-tab-btn {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+}
+
+/* 8. My Rank Sticky (Highlight at Bottom) */
+.my-ranking-highlight {
+    background: var(--secondary-color);
+    border-radius: var(--border-radius-md);
+    padding: 1rem 2rem;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.my-rank-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.my-rank-val {
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: #FFFFFF;
+}
+
+/* 9. Animations */
+@keyframes podium-entry {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.podium-item {
+    animation: podium-entry 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* 10. Global Ranking Stats Sidebar */
+.ranking-sidebar-widget {
+    background: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.stat-row-compact {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-row-compact:last-child { border-bottom: none; }
